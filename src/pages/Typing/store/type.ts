@@ -44,6 +44,7 @@ export type WrongWordData = {
 export type TypingState = {
   chapterData: ChapterData
   timerData: TimerData
+  restartRevision: number
   isTyping: boolean
   isFinished: boolean
   isShowSkip: boolean

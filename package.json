@@ -2,6 +2,7 @@
   "name": "qwerty-learner",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@1.22.22",
   "homepage": ".",
   "dependencies": {
     "@floating-ui/react": "^0.20.1",
@@ -37,8 +38,10 @@
     "html-to-image": "^1.11.11",
     "immer": "^9.0.21",
     "jotai": "^2.0.3",
+    "lucide": "^0.294.0",
     "lucide-react": "^0.294.0",
     "mixpanel-browser": "^2.45.0",
+    "morphicons": "^1.7.0",
     "pako": "^2.1.0",
     "react": "^18.2.0",
     "react-activity-calendar": "^2.0.2",
@@ -60,7 +63,7 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "cross-env CI=false vite build --base=./",
+    "build": "cross-env CI=false vite build",
     "test": "echo \"No tests\"",
     "test:e2e": "playwright test",
     "lint": "eslint .",

@@ -2,7 +2,7 @@ import type { IChapterRecord, IReviewRecord, IRevisionDictRecord, IWordRecord, L
 import { ChapterRecord, ReviewRecord, WordRecord } from './record'
 import { TypingContext, TypingStateActionType } from '@/pages/Typing/store'
 import type { TypingState } from '@/pages/Typing/store/type'
-import { currentChapterAtom, currentDictIdAtom, isReviewModeAtom } from '@/store'
+import { currentChapterAtom, isReviewModeAtom, practiceRecordDictIdAtom } from '@/store'
 import type { Table } from 'dexie'
 import Dexie from 'dexie'
 import { useAtomValue } from 'jotai'
@@ -43,7 +43,7 @@ db.reviewRecords.mapToClass(ReviewRecord)
 export function useSaveChapterRecord() {
   const currentChapter = useAtomValue(currentChapterAtom)
   const isRevision = useAtomValue(isReviewModeAtom)
-  const dictID = useAtomValue(currentDictIdAtom)
+  const dictID = useAtomValue(practiceRecordDictIdAtom)
 
   const saveChapterRecord = useCallback(
     (typingState: TypingState) => {
@@ -80,7 +80,7 @@ export type WordKeyLogger = {
 export function useSaveWordRecord() {
   const isRevision = useAtomValue(isReviewModeAtom)
   const currentChapter = useAtomValue(currentChapterAtom)
-  const dictID = useAtomValue(currentDictIdAtom)
+  const dictID = useAtomValue(practiceRecordDictIdAtom)
 
   const { dispatch } = useContext(TypingContext) ?? {}
 

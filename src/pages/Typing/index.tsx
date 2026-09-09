@@ -1,4 +1,5 @@
 import Layout from '../../components/Layout'
+import ArticleHeader from './components/ArticleHeader'
 import { DictChapterButton } from './components/DictChapterButton'
 import PronunciationSwitcher from './components/PronunciationSwitcher'
 import ResultScreen from './components/ResultScreen'
@@ -12,30 +13,46 @@ import { useWordList } from './hooks/useWordList'
 import { TypingContext, TypingStateActionType, initialState, typingReducer } from './store'
 import { DonateCard } from '@/components/DonateCard'
 import Header from '@/components/Header'
-import Tooltip from '@/components/Tooltip'
 import { idDictionaryMap } from '@/resources/dictionary'
-import { currentChapterAtom, currentDictIdAtom, isReviewModeAtom, randomConfigAtom, reviewModeInfoAtom } from '@/store'
+import {
+  currentChapterAtom,
+  currentDictIdAtom,
+  isPracticeModeAtom,
+  isReviewModeAtom,
+  randomConfigAtom,
+  reviewModeInfoAtom,
+} from '@/store'
 import { IsDesktop, isLegal } from '@/utils'
 import { useSaveChapterRecord } from '@/utils/db'
 import { useMixPanelChapterLogUploader } from '@/utils/mixpanel'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import type React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useImmerReducer } from 'use-immer'
+
+const isLegacyDictionaryMode = () => new URLSearchParams(window.location.search).has('legacy-dictionary')
+
+const isTypingInteractiveTarget = (target: EventTarget | null) => {
+  if (!(target instanceof HTMLElement)) return false
+
+  return ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(target.tagName) || target.isContentEditable
+}
 
 const App: React.FC = () => {
   const [state, dispatch] = useImmerReducer(typingReducer, structuredClone(initialState))
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { words } = useWordList()
+  const { words, error } = useWordList()
 
   const [currentDictId, setCurrentDictId] = useAtom(currentDictIdAtom)
   const setCurrentChapter = useSetAtom(currentChapterAtom)
+  const isPracticeMode = useAtomValue(isPracticeModeAtom)
   const randomConfig = useAtomValue(randomConfigAtom)
   const chapterLogUploader = useMixPanelChapterLogUploader(state)
   const saveChapterRecord = useSaveChapterRecord()
 
   const reviewModeInfo = useAtomValue(reviewModeInfoAtom)
   const isReviewMode = useAtomValue(isReviewModeAtom)
+  const showLegacyDictionaryShell = isLegacyDictionaryMode()
 
   useEffect(() => {
     // 检测用户设备
@@ -51,16 +68,12 @@ const App: React.FC = () => {
   // 在组件挂载和currentDictId改变时，检查当前字典是否存在，如果不存在，则将其重置为默认值
   useEffect(() => {
     const id = currentDictId
-    if (!(id in idDictionaryMap)) {
+    if (!isPracticeMode && !(id in idDictionaryMap)) {
       setCurrentDictId('cet4')
       setCurrentChapter(0)
       return
     }
-  }, [currentDictId, setCurrentChapter, setCurrentDictId])
-
-  const skipWord = useCallback(() => {
-    dispatch({ type: TypingStateActionType.SKIP_WORD })
-  }, [dispatch])
+  }, [currentDictId, isPracticeMode, setCurrentChapter, setCurrentDictId])
 
   useEffect(() => {
     const onBlur = () => {
@@ -80,6 +93,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!state.isTyping) {
       const onKeyDown = (e: KeyboardEvent) => {
+        if (isTypingInteractiveTarget(e.target)) return
+
         if (!isLoading && e.key !== 'Enter' && (isLegal(e.key) || e.key === ' ') && !e.altKey && !e.ctrlKey && !e.metaKey) {
           e.preventDefault()
           dispatch({ type: TypingStateActionType.SET_IS_TYPING, payload: true })
@@ -128,29 +143,27 @@ const App: React.FC = () => {
 
   return (
     <TypingContext.Provider value={{ state: state, dispatch }}>
-      {state.isFinished && <DonateCard />}
+      {state.isFinished && !isPracticeMode && <DonateCard />}
       {state.isFinished && <ResultScreen />}
-      <Layout>
-        <Header>
-          <DictChapterButton />
-          <PronunciationSwitcher />
-          <Switcher />
-          <StartButton isLoading={isLoading} />
-          <Tooltip content="跳过该词">
-            <button
-              className={`${
-                state.isShowSkip ? 'bg-orange-400' : 'invisible w-0 bg-gray-300 px-0 opacity-0'
-              } my-btn-primary transition-all duration-300 `}
-              onClick={skipWord}
-            >
-              Skip
-            </button>
-          </Tooltip>
-        </Header>
+      <Layout showFooter={!isPracticeMode}>
+        {showLegacyDictionaryShell ? (
+          <Header>
+            <DictChapterButton />
+            <PronunciationSwitcher />
+            <Switcher />
+            <StartButton isLoading={isLoading} />
+          </Header>
+        ) : (
+          <ArticleHeader isLoading={isLoading} />
+        )}
         <div className="container mx-auto flex h-full flex-1 flex-col items-center justify-center pb-5">
           <div className="container relative mx-auto flex h-full flex-col items-center">
             <div className="container flex flex-grow items-center justify-center">
-              {isLoading ? (
+              {error ? (
+                <p role="alert" className="text-center text-lg text-red-600">
+                  {error.message}
+                </p>
+              ) : isLoading ? (
                 <div className="flex flex-col items-center justify-center ">
                   <div
                     className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid  border-indigo-400 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -165,7 +178,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </Layout>
-      <WordList />
+      {showLegacyDictionaryShell && <WordList />}
     </TypingContext.Provider>
   )
 }

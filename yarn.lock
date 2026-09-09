@@ -4816,6 +4816,11 @@ lucide-react@^0.294.0:
   resolved "https://registry.npmjs.org/lucide-react/-/lucide-react-0.294.0.tgz#dc406e1e7e2f722cf93218fe5b31cf3c95778817"
   integrity sha512-V7o0/VECSGbLHn3/1O67FUgBwWB+hmzshrgDVRJQhMh8uj5D3HBuIvhuAmQTtlupILSplwIZg5FTc4tTKMA2SA==
 
+lucide@^0.294.0:
+  version "0.294.0"
+  resolved "https://registry.npmjs.org/lucide/-/lucide-0.294.0.tgz#ea984af9c086f47b723c825a34610352c0d8dcd1"
+  integrity sha512-6qMSsvJBE+/j+inFUIyowoyqitSntt2oKjXyew/S6Y2ZGdaLQ0ktNGtkDk3LqTVlwfAWGAWvFxUsLYI8tmt3Hw==
+
 magic-string@^0.27.0:
   version "0.27.0"
   resolved "https://registry.npmmirror.com/magic-string/-/magic-string-0.27.0.tgz"
@@ -4904,6 +4909,11 @@ modern-normalize@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmmirror.com/modern-normalize/-/modern-normalize-1.1.0.tgz"
   integrity sha512-2lMlY1Yc1+CUy0gw4H95uNN7vjbpoED7NNRSBHE25nWfLBdmMzFCsPshlzbxHz+gYMcBEUN8V4pU16prcdPSgA==
+
+morphicons@^1.7.0:
+  version "1.7.1"
+  resolved "https://registry.npmjs.org/morphicons/-/morphicons-1.7.1.tgz#2384e48e410ba2954c3bbde69d6b0804a8127d2a"
+  integrity sha512-q5ylxy5/d7vBg0OAzanlooXf05PekovMYDuuQVpr6vAQZxl99lrJbaIi+jJ32PXQf9WEEaDO2pbNBsx1ZhEnFQ==
 
 ms@2.1.2, ms@^2.1.1:
   version "2.1.2"

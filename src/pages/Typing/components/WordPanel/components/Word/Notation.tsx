@@ -1,25 +1,25 @@
 import { isKanji } from '@/utils/kana'
-import { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
+
+export type NotationInfo = {
+  word: string
+  phonetic?: string
+}
 
 type NotationProps = {
   notation: string
 }
 
-type NotationInfo = {
-  word: string
-  phonetic?: string
-}
-
 export default function Notation({ notation }: NotationProps) {
-  const infos: NotationInfo[] = useMemo(() => getNotationInfo(notation), [notation])
+  const infos = useMemo(() => getNotationInfo(notation), [notation])
   return (
     <div className="mx-auto flex h-20 items-end">
       <ruby className="mb-1 p-0 font-mono text-5xl text-gray-800 dark:text-opacity-80">
-        {infos.map(({ word, phonetic }) => {
+        {infos.map(({ word, phonetic }, index) => {
           const hasPhonetic = phonetic && phonetic.length > 0
           const isEmptyPhonetic = hasPhonetic && phonetic.trim().length == 0
           return (
-            <>
+            <Fragment key={`${word}-${phonetic}-${index}`}>
               {word}
               {hasPhonetic && isEmptyPhonetic ? (
                 <>
@@ -32,7 +32,7 @@ export default function Notation({ notation }: NotationProps) {
                   <rp>{')'}</rp>
                 </>
               )}
-            </>
+            </Fragment>
           )
         })}
       </ruby>
@@ -40,7 +40,7 @@ export default function Notation({ notation }: NotationProps) {
   )
 }
 
-const getNotationInfo = (notation: string): NotationInfo[] => {
+export const getNotationInfo = (notation: string): NotationInfo[] => {
   const re = /(.+?)\((.+?)\)/g
   let match
   let start = 0
@@ -78,3 +78,7 @@ const getNotationInfo = (notation: string): NotationInfo[] => {
   }
   return ret
 }
+
+export const stripNotation = (notation: string): string => getNotationInfo(notation).map(({ word }) => word).join('')
+
+export const isNotationCompatible = (notation: string, wordName: string): boolean => stripNotation(notation) === wordName

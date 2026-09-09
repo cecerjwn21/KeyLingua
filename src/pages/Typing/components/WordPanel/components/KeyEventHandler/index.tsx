@@ -1,14 +1,41 @@
 import type { WordUpdateAction } from '../InputHandler'
+import { getPhysicalAsciiCharacter } from './physicalAscii'
 import { TypingContext } from '@/pages/Typing/store'
 import { isChineseSymbol, isLegal } from '@/utils'
 import { useCallback, useContext, useEffect } from 'react'
 
-export default function KeyEventHandler({ updateInput }: { updateInput: (updateObj: WordUpdateAction) => void }) {
+type KeyEventInputMode = 'logical' | 'physical-ascii'
+
+export default function KeyEventHandler({
+  updateInput,
+  inputMode = 'logical',
+}: {
+  updateInput: (updateObj: WordUpdateAction) => void
+  inputMode?: KeyEventInputMode
+}) {
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   const { state } = useContext(TypingContext)!
 
   const onKeydown = useCallback(
     (e: KeyboardEvent) => {
+      const target = e.target
+      if (
+        target instanceof HTMLElement &&
+        (target.tagName === 'SELECT' || target.isContentEditable || (target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')))
+      ) {
+        return
+      }
+
+      if (inputMode === 'physical-ascii') {
+        if (e.defaultPrevented) return
+        const physicalChar = getPhysicalAsciiCharacter(e)
+        if (physicalChar !== null) {
+          e.preventDefault()
+          updateInput({ type: 'add', value: physicalChar, event: e })
+        }
+        return
+      }
+
       const char = e.key
 
       if (isChineseSymbol(char)) {
@@ -20,7 +47,7 @@ export default function KeyEventHandler({ updateInput }: { updateInput: (updateO
         updateInput({ type: 'add', value: char, event: e })
       }
     },
-    [updateInput],
+    [inputMode, updateInput],
   )
 
   useEffect(() => {

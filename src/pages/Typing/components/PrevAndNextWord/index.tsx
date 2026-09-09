@@ -1,65 +1,53 @@
 import { TypingContext, TypingStateActionType } from '../../store'
+import ProductIcon from '@/components/ProductIcon'
 import Tooltip from '@/components/Tooltip'
-import { currentDictInfoAtom, wordDictationConfigAtom } from '@/store'
 import { CTRL } from '@/utils'
-import { useAtomValue } from 'jotai'
+import { ArrowLeft, ArrowRight } from 'lucide'
 import { useCallback, useContext, useMemo } from 'react'
-import IconPrev from '~icons/tabler/arrow-narrow-left'
-import IconNext from '~icons/tabler/arrow-narrow-right'
 
-export default function PrevAndNextWord({ type }: LastAndNextWordProps) {
+export default function PrevAndNextWord({ type, navigation }: LastAndNextWordProps) {
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   const { state, dispatch } = useContext(TypingContext)!
 
-  const wordDictationConfig = useAtomValue(wordDictationConfigAtom)
-  const newIndex = useMemo(() => state.chapterData.index + (type === 'prev' ? -1 : 1), [state.chapterData.index, type])
-  const word = state.chapterData.words[newIndex]
+  const currentIndex = navigation?.currentIndex ?? state.chapterData.index
+  const itemCount = navigation?.itemCount ?? state.chapterData.words.length
+  const newIndex = useMemo(() => currentIndex + (type === 'prev' ? -1 : 1), [currentIndex, type])
+  const hasAdjacentItem = newIndex >= 0 && newIndex < itemCount
   const shortCutKey = useMemo(() => (type === 'prev' ? `${CTRL} + Shift + ArrowLeft` : `${CTRL} + Shift + ArrowRight`), [type])
-  const currentLanguage = useAtomValue(currentDictInfoAtom).language
+  const label = type === 'prev' ? '上一句' : '下一句'
 
   const onClickWord = useCallback(() => {
-    if (!word) return
+    if (!hasAdjacentItem) return
 
-    if (type === 'prev') dispatch({ type: TypingStateActionType.SKIP_2_WORD_INDEX, newIndex })
-    if (type === 'next') dispatch({ type: TypingStateActionType.SKIP_2_WORD_INDEX, newIndex })
-  }, [type, dispatch, newIndex, word])
-
-  const headWord = useMemo(() => {
-    if (!word) return ''
-
-    const showWord = ['romaji', 'hapin'].includes(currentLanguage) ? word.notation : word.name
-
-    if (type === 'prev') return showWord
-
-    if (type === 'next') {
-      return !wordDictationConfig.isOpen ? showWord : (showWord || '').replace(/./g, '_')
+    if (navigation) {
+      navigation.onNavigate(newIndex)
+      return
     }
-  }, [word, currentLanguage, type, wordDictationConfig.isOpen])
+
+    dispatch({ type: TypingStateActionType.SKIP_2_WORD_INDEX, newIndex })
+  }, [dispatch, hasAdjacentItem, navigation, newIndex])
 
   return (
     <>
-      {word ? (
-        <Tooltip content={`快捷键: ${shortCutKey}`}>
-          <div
+      {hasAdjacentItem ? (
+        <Tooltip content={`快捷键: ${shortCutKey}`} placement="bottom" className="practice-word-navigation z-20">
+          <button
+            type="button"
+            data-testid={`practice-${type}-word`}
+            aria-label={`${label}，快捷鍵：${shortCutKey}`}
             onClick={onClickWord}
-            className="flex max-w-xs cursor-pointer select-none items-center text-gray-700 opacity-60 duration-200 ease-in-out hover:opacity-100 dark:text-gray-400"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                onClickWord()
+              }
+            }}
+            className="inline-flex min-w-[6.5rem] select-none items-center justify-center gap-2 rounded-lg bg-slate-100/80 px-3 py-2 text-slate-800 shadow-sm transition-[background-color,color,transform] duration-150 ease-out hover:bg-slate-200 hover:text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-[0.98] dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700 dark:hover:text-white sm:px-4"
           >
-            {type === 'prev' && <IconPrev className="mr-4 shrink-0 grow-0 text-2xl" />}
-
-            <div className={`grow-1 flex w-full flex-col ${type === 'next' ? 'items-end text-right' : ''}`}>
-              <p
-                className={`font-mono text-2xl font-normal text-gray-700 dark:text-gray-400 ${
-                  !wordDictationConfig.isOpen ? 'tracking-normal' : 'tracking-wider'
-                }`}
-              >
-                {headWord}
-              </p>
-              {state.isTransVisible && (
-                <p className="line-clamp-1 max-w-full text-sm font-normal text-gray-600 dark:text-gray-500">{word.trans.join('；')}</p>
-              )}
-            </div>
-            {type === 'next' && <IconNext className="ml-4 shrink-0 grow-0 text-2xl" />}
-          </div>
+            {type === 'prev' && <ProductIcon icon={ArrowLeft} size={18} className="shrink-0" />}
+            <span className="text-sm font-medium leading-5">{label}</span>
+            {type === 'next' && <ProductIcon icon={ArrowRight} size={18} className="shrink-0" />}
+          </button>
         </Tooltip>
       ) : (
         <div />
@@ -69,6 +57,11 @@ export default function PrevAndNextWord({ type }: LastAndNextWordProps) {
 }
 
 export type LastAndNextWordProps = {
-  /** 上一个单词还是下一个单词 */
+  /** 上一句還是下一句 */
   type: 'prev' | 'next'
+  navigation?: {
+    currentIndex: number
+    itemCount: number
+    onNavigate: (newIndex: number) => void
+  }
 }

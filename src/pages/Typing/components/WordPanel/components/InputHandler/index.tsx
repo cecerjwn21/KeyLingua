@@ -1,14 +1,23 @@
 import KeyEventHandler from '../KeyEventHandler'
 import TextAreaHandler from '../TextAreaHandler'
-import { currentDictInfoAtom } from '@/store'
+import { currentDictInfoAtom, isPracticeModeAtom } from '@/store'
 import { useAtomValue } from 'jotai'
 import type { FormEvent } from 'react'
 import { useMemo } from 'react'
 
-export default function InputHandler({ updateInput }: { updateInput: (updateObj: WordUpdateAction) => void }) {
+export default function InputHandler({ updateInput, target }: { updateInput: (updateObj: WordUpdateAction) => void; target: string }) {
   const dictInfo = useAtomValue(currentDictInfoAtom)
+  const isPracticeMode = useAtomValue(isPracticeModeAtom)
 
   const handler = useMemo(() => {
+    if (isPracticeMode) {
+      return /^[\x20-\x7e]+$/.test(target) ? (
+        <KeyEventHandler inputMode="physical-ascii" updateInput={updateInput} />
+      ) : (
+        <TextAreaHandler updateInput={updateInput} />
+      )
+    }
+
     switch (dictInfo.language) {
       case 'en':
         return <KeyEventHandler updateInput={updateInput} />
@@ -21,7 +30,7 @@ export default function InputHandler({ updateInput }: { updateInput: (updateObj:
       default:
         return <TextAreaHandler updateInput={updateInput} />
     }
-  }, [dictInfo.language, updateInput])
+  }, [dictInfo.language, isPracticeMode, target, updateInput])
 
   return <>{handler}</>
 }

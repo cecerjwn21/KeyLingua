@@ -7,9 +7,9 @@ import Setting from '../Setting'
 import SoundSwitcher from '../SoundSwitcher'
 import WordDictationSwitcher from '../WordDictationSwitcher'
 import Tooltip from '@/components/Tooltip'
-import { isOpenDarkModeAtom } from '@/store'
+import { isOpenDarkModeAtom, isPracticeModeAtom } from '@/store'
 import { CTRL } from '@/utils'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useContext } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import IconMoon from '~icons/heroicons/moon-solid'
@@ -19,6 +19,7 @@ import IconLanguageOff from '~icons/tabler/language-off'
 
 export default function Switcher() {
   const [isOpenDarkMode, setIsOpenDarkMode] = useAtom(isOpenDarkModeAtom)
+  const isPracticeMode = useAtomValue(isPracticeModeAtom)
   const { state, dispatch } = useContext(TypingContext) ?? {}
 
   const changeDarkModeState = () => {
@@ -42,7 +43,7 @@ export default function Switcher() {
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <Tooltip content="音效设置">
+      <Tooltip content="音效設定">
         <SoundSwitcher />
       </Tooltip>
 
@@ -50,9 +51,11 @@ export default function Switcher() {
         <LoopWordSwitcher />
       </Tooltip>
 
-      <Tooltip className="h-7 w-7" content={`开关默写模式（${CTRL} + V）`}>
-        <WordDictationSwitcher />
-      </Tooltip>
+      {!isPracticeMode && (
+        <Tooltip className="h-7 w-7" content={`开关默写模式（${CTRL} + V）`}>
+          <WordDictationSwitcher />
+        </Tooltip>
+      )}
       <Tooltip className="h-7 w-7" content={`开关释义显示（${CTRL} + Shift + V）`}>
         <button
           className={`p-[2px] ${state?.isTransVisible ? 'text-indigo-500' : 'text-gray-500'} text-lg focus:outline-none`}

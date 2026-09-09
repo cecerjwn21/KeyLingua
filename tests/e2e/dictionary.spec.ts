@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Dictionary manage', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/typing?legacy-dictionary=1')
     await page.getByLabel('关闭提示').click()
   })
 

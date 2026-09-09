@@ -11,10 +11,15 @@ import type { PluginOption } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
+  const isPagesDeployment = process.env.REACT_APP_DEPLOY_ENV === 'pages'
+  let buildOutputDirectory = path.resolve(__dirname, 'build')
+  const githubPagesRedirectScript =
+    /\s*<script type="text\/javascript">\s*\/\/ Single Page Apps for GitHub Pages[\s\S]*?<\/script>/
   const latestCommitHash = await new Promise<string>((resolve) => {
     return getLastCommit((err, commit) => (err ? 'unknown' : resolve(commit.shortHash)))
   })
   return {
+    base: isPagesDeployment ? './' : '/',
     plugins: [
       react({ babel: { plugins: [jotaiDebugLabel, jotaiReactRefresh] } }),
       visualizer() as PluginOption,
@@ -27,6 +32,21 @@ export default defineConfig(async ({ mode }) => {
           },
         },
       }),
+      {
+        name: 'deployment-output-compatibility',
+        apply: 'build',
+        configResolved(config) {
+          buildOutputDirectory = path.resolve(config.root, config.build.outDir)
+        },
+        transformIndexHtml(html) {
+          return isPagesDeployment ? html : html.replace(githubPagesRedirectScript, '')
+        },
+        async closeBundle() {
+          if (!isPagesDeployment) {
+            await fs.rm(path.join(buildOutputDirectory, '404.html'), { force: true })
+          }
+        },
+      },
     ],
     build: {
       minify: true,

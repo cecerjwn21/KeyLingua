@@ -10,9 +10,15 @@
 
 # production
 /build
+/build.stale-*/
+/.vite/
+/.cache/
 
 # misc
 .DS_Store
+desktop.ini
+/啟動日文練習.bat
+/GPT生成單字對話/
 .env.local
 .env.development.local
 .env.test.local

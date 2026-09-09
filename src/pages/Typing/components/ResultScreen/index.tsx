@@ -1,5 +1,7 @@
 import { TypingContext, TypingStateActionType } from '../../store'
 import ShareButton from '../ShareButton'
+import { calculateCPM } from '../Speed/statistics'
+import ArticleResultScreen from './ArticleResultScreen'
 import { AuthorButton } from './AuthorButton'
 import ConclusionBar from './ConclusionBar'
 import RemarkRing from './RemarkRing'
@@ -9,8 +11,11 @@ import Tooltip from '@/components/Tooltip'
 import {
   currentChapterAtom,
   currentDictInfoAtom,
+  currentPracticeDocumentAtom,
   infoPanelStateAtom,
+  isPracticeModeAtom,
   isReviewModeAtom,
+  practiceDocumentIdAtom,
   randomConfigAtom,
   reviewModeInfoAtom,
   wordDictationConfigAtom,
@@ -29,13 +34,16 @@ import IconGithub from '~icons/simple-icons/github'
 import IconWechat from '~icons/simple-icons/wechat'
 import IconX from '~icons/tabler/x'
 
-const ResultScreen = () => {
+const DictionaryResultScreen = () => {
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   const { state, dispatch } = useContext(TypingContext)!
 
   const setWordDictationConfig = useSetAtom(wordDictationConfigAtom)
   const currentDictInfo = useAtomValue(currentDictInfoAtom)
+  const currentPracticeDocument = useAtomValue(currentPracticeDocumentAtom)
+  const isPracticeMode = useAtomValue(isPracticeModeAtom)
   const [currentChapter, setCurrentChapter] = useAtom(currentChapterAtom)
+  const setPracticeDocumentId = useSetAtom(practiceDocumentIdAtom)
   const setInfoPanelState = useSetAtom(infoPanelStateAtom)
   const randomConfig = useAtomValue(randomConfigAtom)
   const navigate = useNavigate()
@@ -69,12 +77,12 @@ const ResultScreen = () => {
         const ws = utils.json_to_sheet(exportData)
         const wb = utils.book_new()
         utils.book_append_sheet(wb, ws, 'Data')
-        writeFileXLSX(wb, `${currentDictInfo.name}第${currentChapter + 1}章.xlsx`)
+        writeFileXLSX(wb, `${currentPracticeDocument?.title ?? currentDictInfo.name}第${currentChapter + 1}章.xlsx`)
       })
       .catch(() => {
         console.log('写入 xlsx 模块导入失败')
       })
-  }, [currentChapter, currentDictInfo.name, state.chapterData])
+  }, [currentChapter, currentDictInfo.name, currentPracticeDocument?.title, state.chapterData])
 
   const wrongWords = useMemo(() => {
     return state.chapterData.userInputLogs
@@ -84,8 +92,8 @@ const ResultScreen = () => {
   }, [state.chapterData.userInputLogs, state.chapterData.words])
 
   const isLastChapter = useMemo(() => {
-    return currentChapter >= currentDictInfo.chapterCount - 1
-  }, [currentChapter, currentDictInfo])
+    return isPracticeMode || currentChapter >= currentDictInfo.chapterCount - 1
+  }, [currentChapter, currentDictInfo, isPracticeMode])
 
   const correctRate = useMemo(() => {
     const chapterLength = state.chapterData.words.length
@@ -111,6 +119,11 @@ const ResultScreen = () => {
     const secondString = restSeconds < 10 ? '0' + restSeconds : restSeconds + ''
     return `${minuteString}:${secondString}`
   }, [state.timerData.time])
+
+  const practiceCPM = useMemo(
+    () => calculateCPM(state.chapterData.correctCount, state.timerData.time),
+    [state.chapterData.correctCount, state.timerData.time],
+  )
 
   const repeatButtonHandler = useCallback(async () => {
     if (isReviewMode) {
@@ -164,6 +177,11 @@ const ResultScreen = () => {
       dispatch({ type: TypingStateActionType.REPEAT_CHAPTER, shouldShuffle: false })
     }
   }, [dispatch, isReviewMode, setCurrentChapter, setReviewModeInfo])
+
+  const returnToDictionary = useCallback(() => {
+    setCurrentChapter(0)
+    setPracticeDocumentId(null)
+  }, [setCurrentChapter, setPracticeDocumentId])
 
   const onNavigateToGallery = useCallback(() => {
     setCurrentChapter(0)
@@ -219,19 +237,29 @@ const ResultScreen = () => {
       >
         <div className="flex h-screen items-center justify-center">
           <div className="my-card fixed flex w-[90vw] max-w-6xl flex-col overflow-hidden rounded-3xl bg-white pb-14 pl-10 pr-5 pt-10 shadow-lg dark:bg-gray-800 md:w-4/5 lg:w-3/5">
-            <div className="text-center font-sans text-xl font-normal text-gray-900 dark:text-gray-400 md:text-2xl">
-              {`${currentDictInfo.name} ${isReviewMode ? '错题复习' : '第' + (currentChapter + 1) + '章'}`}
+            <div className="break-words px-8 text-center font-sans text-xl font-normal text-gray-900 dark:text-gray-400 md:text-2xl">
+              {isPracticeMode
+                ? currentPracticeDocument?.title
+                : `${currentDictInfo.name} ${isReviewMode ? '错题复习' : '第' + (currentChapter + 1) + '章'}`}
             </div>
             <button className="absolute right-7 top-5" onClick={exitButtonHandler}>
               <IconX className="text-gray-400" />
             </button>
             <div className="mt-10 flex flex-row gap-2 overflow-hidden">
               <div className="flex flex-shrink-0 flex-grow-0 flex-col gap-3 px-4 sm:px-1 md:px-2 lg:px-4">
-                <RemarkRing remark={`${state.timerData.accuracy}%`} caption="正确率" percentage={state.timerData.accuracy} />
-                <RemarkRing remark={timeString} caption="章节耗时" />
-                <RemarkRing remark={state.timerData.wpm + ''} caption="WPM" />
+                <RemarkRing
+                  remark={`${state.timerData.accuracy}%`}
+                  caption={isPracticeMode ? '正確率' : '正确率'}
+                  percentage={state.timerData.accuracy}
+                />
+                <RemarkRing remark={timeString} caption={isPracticeMode ? '完成時間' : '章节耗时'} />
+                <RemarkRing
+                  remark={isPracticeMode ? `${practiceCPM} 字/分鐘` : state.timerData.wpm + ''}
+                  caption={isPracticeMode ? '速度' : 'WPM'}
+                />
+                {isPracticeMode && <RemarkRing remark={state.chapterData.wrongCount + ''} caption="錯誤次數" />}
               </div>
-              <div className="z-10 ml-6 flex-1 overflow-visible rounded-xl bg-indigo-50 dark:bg-gray-700">
+              <div className="z-10 ml-6 min-w-0 flex-1 overflow-visible rounded-xl bg-indigo-50 dark:bg-gray-700">
                 <div className="customized-scrollbar z-20 ml-8 mr-1 flex h-80 flex-row flex-wrap content-start gap-4 overflow-y-auto overflow-x-hidden pr-7 pt-9">
                   {wrongWords.map((word, index) => (
                     <WordChip key={`${index}-${word.name}`} word={word} />
@@ -290,26 +318,37 @@ const ResultScreen = () => {
             <div className="mt-10 flex w-full justify-center gap-5 px-5 text-xl">
               {!isReviewMode && (
                 <>
-                  <Tooltip content="快捷键：shift + enter">
-                    <button
-                      className="my-btn-primary h-12 border-2 border-solid border-gray-300 bg-white text-base text-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
-                      type="button"
-                      onClick={dictationButtonHandler}
-                      title="默写本章节"
-                    >
-                      默写本章节
-                    </button>
-                  </Tooltip>
+                  {!isPracticeMode && (
+                    <Tooltip content="快捷键：shift + enter">
+                      <button
+                        className="my-btn-primary h-12 border-2 border-solid border-gray-300 bg-white text-base text-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
+                        type="button"
+                        onClick={dictationButtonHandler}
+                        title="默写本章节"
+                      >
+                        默写本章节
+                      </button>
+                    </Tooltip>
+                  )}
                   <Tooltip content="快捷键：space">
                     <button
                       className="my-btn-primary h-12 border-2 border-solid border-gray-300 bg-white text-base text-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
                       type="button"
                       onClick={repeatButtonHandler}
-                      title="重复本章节"
+                      title={isPracticeMode ? '再練一次' : '重复本章节'}
                     >
-                      重复本章节
+                      {isPracticeMode ? '再練一次' : '重复本章节'}
                     </button>
                   </Tooltip>
+                  {isPracticeMode && (
+                    <button
+                      className="my-btn-primary h-12 border-2 border-solid border-gray-300 bg-white text-base text-gray-700 dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700"
+                      type="button"
+                      onClick={returnToDictionary}
+                    >
+                      切回單字模式
+                    </button>
+                  )}
                 </>
               )}
               {!isLastChapter && !isReviewMode && (
@@ -341,6 +380,12 @@ const ResultScreen = () => {
       </Transition>
     </div>
   )
+}
+
+const ResultScreen = () => {
+  const isPracticeMode = useAtomValue(isPracticeModeAtom)
+
+  return isPracticeMode ? <ArticleResultScreen /> : <DictionaryResultScreen />
 }
 
 export default ResultScreen

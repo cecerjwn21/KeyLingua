@@ -124,13 +124,13 @@ export default function SoundSetting() {
       <ScrollArea.Viewport className="h-full w-full px-3">
         <div className={styles.tabContent}>
           <div className={styles.section}>
-            <span className={styles.sectionLabel}>单词发音</span>
+            <span className={styles.sectionLabel}>單字發音</span>
             <div className={styles.switchBlock}>
               <Switch checked={pronunciationConfig.isOpen} onChange={onTogglePronunciation} className="switch-root">
                 <span aria-hidden="true" className="switch-thumb" />
               </Switch>
-              <span className="text-right text-xs font-normal leading-tight text-gray-600">{`发音已${
-                pronunciationConfig.isOpen ? '开启' : '关闭'
+              <span className="text-right text-xs font-normal leading-tight text-gray-600">{`發音已${
+                pronunciationConfig.isOpen ? '開啟' : '關閉'
               }`}</span>
             </div>
             <div className={styles.block}>
@@ -138,7 +138,7 @@ export default function SoundSetting() {
               <div className="flex h-5 w-full items-center justify-between">
                 <Slider.Root
                   defaultValue={[pronunciationConfig.volume * 100]}
-                  max={100}
+                  max={150}
                   step={10}
                   className="slider"
                   onValueChange={onChangePronunciationVolume}
@@ -176,13 +176,13 @@ export default function SoundSetting() {
           </div>
           {window.speechSynthesis && (
             <div className={styles.section}>
-              <span className={styles.sectionLabel}>释义发音</span>
+              <span className={styles.sectionLabel}>釋義發音</span>
               <div className={styles.switchBlock}>
                 <Switch checked={pronunciationConfig.isTransRead} onChange={onTogglePronunciationIsTransRead} className="switch-root">
                   <span aria-hidden="true" className="switch-thumb" />
                 </Switch>
-                <span className="text-right text-xs font-normal leading-tight text-gray-600">{`发音已${
-                  pronunciationConfig.isTransRead ? '开启' : '关闭'
+                <span className="text-right text-xs font-normal leading-tight text-gray-600">{`發音已${
+                  pronunciationConfig.isTransRead ? '開啟' : '關閉'
                 }`}</span>
               </div>
               <div className={styles.block}>
@@ -209,26 +209,25 @@ export default function SoundSetting() {
           )}
 
           <div className={styles.section}>
-            <span className={styles.sectionLabel}>按键音</span>
+            <span className={styles.sectionLabel}>開關按鍵音</span>
             <div className={styles.switchBlock}>
               <Switch checked={keySoundsConfig.isOpen} onChange={onToggleKeySounds} className="switch-root">
                 <span aria-hidden="true" className="switch-thumb" />
               </Switch>
-              <span className="text-right text-xs font-normal leading-tight text-gray-600">{`发音已${
-                keySoundsConfig.isOpen ? '开启' : '关闭'
+              <span className="text-right text-xs font-normal leading-tight text-gray-600">{`音效已${
+                keySoundsConfig.isOpen ? '開啟' : '關閉'
               }`}</span>
             </div>
             <div className={styles.block}>
-              <span className={styles.blockLabel}>音量</span>
+              <span className={styles.blockLabel}>按鍵音音量</span>
               <div className="flex h-5 w-full items-center justify-between">
                 <Slider.Root
                   defaultValue={[keySoundsConfig.volume * 100]}
                   max={100}
-                  min={1}
+                  min={0}
                   step={10}
                   className="slider"
                   onValueChange={onChangeKeySoundsVolume}
-                  disabled={!keySoundsConfig.isOpen}
                 >
                   <Slider.Track>
                     <Slider.Range />
@@ -239,7 +238,7 @@ export default function SoundSetting() {
               </div>
             </div>
             <div className={`${styles.block}`}>
-              <span className={styles.blockLabel}>按键音效</span>
+              <span className={styles.blockLabel}>按鍵音色</span>
               <Listbox value={keySoundsConfig.resource.key} onChange={onChangeKeySoundsResource}>
                 <div className="relative">
                   <Listbox.Button className="listbox-button w-60">
@@ -281,26 +280,25 @@ export default function SoundSetting() {
           </div>
 
           <div className={styles.section}>
-            <span className={styles.sectionLabel}>效果音</span>
+            <span className={styles.sectionLabel}>開關效果音</span>
             <div className={styles.switchBlock}>
               <Switch checked={hintSoundsConfig.isOpen} onChange={onToggleHintSounds} className="switch-root">
                 <span aria-hidden="true" className="switch-thumb" />
               </Switch>
-              <span className="text-right text-xs font-normal leading-tight text-gray-600">{`发音已${
-                hintSoundsConfig.isOpen ? '开启' : '关闭'
+              <span className="text-right text-xs font-normal leading-tight text-gray-600">{`音效已${
+                hintSoundsConfig.isOpen ? '開啟' : '關閉'
               }`}</span>
             </div>
             <div className={styles.block}>
-              <span className={styles.blockLabel}>音量</span>
+              <span className={styles.blockLabel}>效果音音量</span>
               <div className="flex h-5 w-full items-center justify-between">
                 <Slider.Root
                   defaultValue={[hintSoundsConfig.volume * 100]}
                   max={100}
-                  min={1}
+                  min={0}
                   step={10}
                   className="slider"
                   onValueChange={onChangeHintSoundsVolume}
-                  disabled={!hintSoundsConfig.isOpen}
                 >
                   <Slider.Track>
                     <Slider.Range />

@@ -42,3 +42,9 @@
   fill: theme('colors.gray.50');
   opacity: 0.8;
 }
+
+.practice-sound-tooltip > div:last-child {
+  right: 0;
+  left: auto;
+  transform: none;
+}

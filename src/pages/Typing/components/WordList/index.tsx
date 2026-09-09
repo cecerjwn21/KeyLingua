@@ -2,7 +2,7 @@ import { TypingContext, TypingStateActionType } from '../../store'
 import WordCard from './WordCard'
 import Drawer from '@/components/Drawer'
 import Tooltip from '@/components/Tooltip'
-import { currentChapterAtom, currentDictInfoAtom, isReviewModeAtom } from '@/store'
+import { currentChapterAtom, currentDictInfoAtom, currentPracticeDocumentAtom, isReviewModeAtom } from '@/store'
 import { Dialog } from '@headlessui/react'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { atom, useAtomValue } from 'jotai'
@@ -12,11 +12,13 @@ import IconX from '~icons/tabler/x'
 
 const currentDictTitle = atom((get) => {
   const isReviewMode = get(isReviewModeAtom)
+  const practiceDocument = get(currentPracticeDocumentAtom)
+  const title = practiceDocument?.title ?? get(currentDictInfoAtom).name
 
   if (isReviewMode) {
-    return `${get(currentDictInfoAtom).name} 错题复习`
+    return `${title} 错题复习`
   } else {
-    return `${get(currentDictInfoAtom).name} 第 ${get(currentChapterAtom) + 1} 章`
+    return `${title} 第 ${get(currentChapterAtom) + 1} 章`
   }
 })
 

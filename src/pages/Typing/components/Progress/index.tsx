@@ -1,9 +1,12 @@
 import { TypingContext } from '../../store'
+import { isPracticeModeAtom } from '@/store'
+import { useAtomValue } from 'jotai'
 import { useContext, useEffect, useState } from 'react'
 
-export default function Progress({ className }: { className?: string }) {
+export default function Progress({ className, typingLength }: { className?: string; typingLength?: number }) {
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   const { state } = useContext(TypingContext)!
+  const isPracticeMode = useAtomValue(isPracticeModeAtom)
   const [progress, setProgress] = useState(0)
   const [phase, setPhase] = useState(0)
 
@@ -14,14 +17,23 @@ export default function Progress({ className }: { className?: string }) {
   }
 
   useEffect(() => {
-    const newProgress = Math.floor((state.chapterData.index / state.chapterData.words.length) * 100)
+    const newProgress =
+      isPracticeMode && typingLength
+        ? Math.floor((state.chapterData.correctCount / typingLength) * 100)
+        : Math.floor((state.chapterData.index / state.chapterData.words.length) * 100)
     setProgress(newProgress)
     const colorPhase = Math.floor(newProgress / 33.4)
     setPhase(colorPhase)
-  }, [state.chapterData.index, state.chapterData.words.length])
+  }, [isPracticeMode, state.chapterData.correctCount, state.chapterData.index, state.chapterData.words.length, typingLength])
 
   return (
-    <div className={`relative w-1/4 pt-1 ${className}`}>
+    <div
+      data-testid={isPracticeMode ? 'article-progress' : undefined}
+      aria-valuemin={isPracticeMode ? 0 : undefined}
+      aria-valuemax={isPracticeMode ? 100 : undefined}
+      aria-valuenow={isPracticeMode ? progress : undefined}
+      className={`relative w-1/4 pt-1 ${className}`}
+    >
       <div className="mb-4 flex h-2 overflow-hidden rounded-xl bg-indigo-100 text-xs transition-all duration-300 dark:bg-indigo-200">
         <div
           style={{ width: `${progress}%` }}

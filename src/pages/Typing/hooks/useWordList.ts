@@ -1,5 +1,8 @@
 import { CHAPTER_LENGTH } from '@/constants'
-import { currentChapterAtom, currentDictInfoAtom, reviewModeInfoAtom } from '@/store'
+import { currentChapterAtom, currentDictInfoAtom, currentTypingPracticeAtom, reviewModeInfoAtom } from '@/store'
+import { createArticleTypingSession } from '@/pages/Typing/utils/practiceArticle'
+import { createEnglishDialogueTypingSession } from '@/pages/English/utils/englishPractice'
+import { getJapaneseReadingTypingTarget } from '@/pages/Typing/utils/practiceTypingTarget'
 import type { Word, WordWithIndex } from '@/typings/index'
 import { wordListFetcher } from '@/utils/wordListFetcher'
 import { useAtom, useAtomValue } from 'jotai'
@@ -17,20 +20,49 @@ export type UseWordListResult = {
  */
 export function useWordList(): UseWordListResult {
   const currentDictInfo = useAtomValue(currentDictInfoAtom)
+  const currentPractice = useAtomValue(currentTypingPracticeAtom)
+  const currentPracticeDocument = currentPractice?.language === 'japanese' && currentPractice.kind === 'article' ? currentPractice.document : undefined
+  const currentEnglishDialogue = currentPractice?.language === 'english' && currentPractice.kind === 'dialogue' ? currentPractice.document : undefined
   const [currentChapter, setCurrentChapter] = useAtom(currentChapterAtom)
   const { isReviewMode, reviewRecord } = useAtomValue(reviewModeInfoAtom)
+  const { practiceSession, practiceError } = useMemo(() => {
+    if (!currentPracticeDocument && !currentEnglishDialogue) return { practiceSession: undefined, practiceError: undefined }
+
+    try {
+      return {
+        practiceSession: currentPracticeDocument
+          ? createArticleTypingSession(currentPracticeDocument)
+          : createEnglishDialogueTypingSession(currentEnglishDialogue!),
+        practiceError: undefined,
+      }
+    } catch (error) {
+      return {
+        practiceSession: undefined,
+        practiceError: error instanceof Error ? error : new Error('無法建立文章練習。'),
+      }
+    }
+  }, [currentEnglishDialogue, currentPracticeDocument])
 
   // Reset current chapter to 0, when currentChapter is greater than chapterCount.
-  if (currentChapter >= currentDictInfo.chapterCount) {
+  if (!currentPractice && currentChapter >= currentDictInfo.chapterCount) {
     setCurrentChapter(0)
   }
 
-  const isFirstChapter = !isReviewMode && currentDictInfo.id === 'cet4' && currentChapter === 0
+  const isFirstChapter = !currentPractice && !isReviewMode && currentDictInfo.id === 'cet4' && currentChapter === 0
   const { data: wordList, error, isLoading } = useSWR(currentDictInfo.url, wordListFetcher)
 
   const words: WordWithIndex[] = useMemo(() => {
     let newWords: Word[]
-    if (isFirstChapter) {
+    if (currentPractice?.kind === 'article') {
+      newWords = practiceSession && 'typingItem' in practiceSession ? [practiceSession.typingItem] : []
+    } else if (currentPractice?.kind === 'dialogue') {
+      newWords = practiceSession && 'typingItems' in practiceSession ? practiceSession.typingItems : []
+    } else if (currentPractice?.kind === 'vocabulary') {
+      newWords =
+        currentPractice.language === 'english'
+          ? currentPractice.items.map((item) => ({ name: item.word, trans: [item.meaning] }))
+          : currentPractice.items.map((item) => ({ name: getJapaneseReadingTypingTarget(item.reading), trans: [item.meaning] }))
+    } else if (isFirstChapter) {
       newWords = firstChapter
     } else if (isReviewMode) {
       newWords = reviewRecord?.words ?? []
@@ -56,9 +88,9 @@ export function useWordList(): UseWordListResult {
         trans,
       }
     })
-  }, [isFirstChapter, isReviewMode, wordList, reviewRecord?.words, currentChapter])
+  }, [currentPractice, currentChapter, isFirstChapter, isReviewMode, practiceSession, reviewRecord?.words, wordList])
 
-  return { words, isLoading, error }
+  return { words, isLoading: currentPractice ? false : isLoading, error: currentPractice ? practiceError : error }
 }
 
 const firstChapter = [

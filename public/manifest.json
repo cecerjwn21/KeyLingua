@@ -1,25 +1,27 @@
 {
-  "short_name": "Qwerty Learner",
-  "name": "Qwerty Learner",
+  "short_name": "KeyLingua",
+  "name": "KeyLingua",
+  "id": "/",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "android-chrome-192x192.png",
+      "src": "/android-chrome-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "android-chrome-512x512.png",
+      "src": "/android-chrome-512x512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#818CF8",
   "background_color": "#ffffff"
 }

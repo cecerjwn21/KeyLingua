@@ -1,4 +1,7 @@
 export * from './resource'
+export * from './practiceGeneration'
+export * from './vocabulary'
+export * from './english'
 
 export type PronunciationType = 'us' | 'uk' | 'romaji' | 'zh' | 'ja' | 'de' | 'hapin' | 'kk' | 'id'
 export type PhoneticType = 'us' | 'uk' | 'romaji' | 'zh' | 'ja' | 'de' | 'hapin' | 'kk' | 'id'
@@ -22,9 +25,46 @@ export const PRONUNCIATION_PHONETIC_MAP: Pronunciation2PhoneticMap = {
 export type Word = {
   name: string
   trans: string[]
-  usphone: string
-  ukphone: string
+  usphone?: string
+  ukphone?: string
   notation?: string
+}
+
+export type PracticeDocument = {
+  id: string
+  title: string
+  source: 'fixture' | 'pasted' | 'generated'
+  language: 'ja' | 'zh' | 'en'
+  jlptLevel?: 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
+  scenario?: string
+  format?: 'prose' | 'dialogue'
+  sentences: Word[]
+}
+
+export type ArticleBlock = Pick<Word, 'name' | 'notation' | 'trans'>
+
+export type PracticeArticle = Omit<PracticeDocument, 'sentences' | 'format'> & {
+  format: 'prose' | 'dialogue'
+  blocks: ArticleBlock[]
+}
+
+export type ArticleTypingSession = {
+  article: PracticeArticle
+  typingTarget: string
+  typingLength: number
+  typingItem: Word
+  sentencePresentations: ArticleSentencePresentation[]
+}
+
+export type RomajiVisualGroup = {
+  start: number
+  end: number
+}
+
+export type ArticleSentencePresentation = {
+  targetStart: number
+  targetEnd: number
+  visualGroups?: RomajiVisualGroup[]
 }
 
 export type WordWithIndex = Word & {
