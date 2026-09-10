@@ -24,7 +24,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'https://qwerty.kaiyi.cool',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'https://keylingua.pages.dev',
 
     executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE,
 
