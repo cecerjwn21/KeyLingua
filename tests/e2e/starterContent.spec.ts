@@ -53,6 +53,30 @@ test('300 單元及所有 item ID 全域唯一，標題與整份內容不重複'
   }
 })
 
+test('Starter 日文不把句尾終止標點納入 target，句中與英文標點仍保留', () => {
+  const japaneseSentences = starterJapaneseArticles.flatMap(({ sentences }) => sentences)
+  expect(japaneseSentences).toHaveLength(450)
+  for (const sentence of japaneseSentences) {
+    expect(sentence.name).not.toMatch(/[。？！]$/u)
+    expect(sentence.notation).not.toMatch(/[。？！]$/u)
+    expect(getPracticeTypingTarget(sentence)).not.toMatch(/[.?!]$/)
+  }
+  const japaneseSentenceWithComma = japaneseSentences.find(({ name }) => name.includes('、'))
+  expect(japaneseSentenceWithComma).toBeDefined()
+  expect(getPracticeTypingTarget(japaneseSentenceWithComma!)).toContain(',')
+
+  const englishSentences = starterEnglishDialogues.flatMap(({ sentences }) => sentences)
+  expect(englishSentences).toHaveLength(450)
+  expect(englishSentences.every(({ text }) => /[.?!]$/.test(text))).toBe(true)
+  expect(englishSentences.some(({ text }) => text.includes(','))).toBe(true)
+  expect(englishSentences.some(({ text }) => text.includes("'"))).toBe(true)
+  for (const document of starterEnglishDialogues) {
+    expect(createEnglishDialogueTypingSession(document).typingItems.map(({ name }) => name)).toEqual(
+      document.sentences.map(({ text }) => text),
+    )
+  }
+})
+
 for (const level of jlpt) {
   test(`${level} 正好 15 個日文單字題庫，各 10 詞，符合正式匯入與 reading invariant`, () => {
     const sets = starterJapaneseVocabulary.sets.filter(({ jlptLevel }) => jlptLevel === level)

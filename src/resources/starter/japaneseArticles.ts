@@ -15,11 +15,14 @@ const article = (
   jlptLevel,
   scenario: title,
   format,
-  sentences: lines.map(([notation, translation]) => ({
-    name: notation.replace(/\([^()]+\)/g, ''),
-    notation,
-    trans: [translation],
-  })),
+  sentences: lines.map(([notation, translation]) => {
+    const starterNotation = notation.replace(/[。？！]+$/u, '')
+    return {
+      name: starterNotation.replace(/\([^()]+\)/g, ''),
+      notation: starterNotation,
+      trans: [translation],
+    }
+  }),
 })
 
 export const starterJapaneseArticles: PracticeDocument[] = [
