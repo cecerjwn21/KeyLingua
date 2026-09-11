@@ -46,7 +46,10 @@ const englishVocabularyLibrary = {
 const seedStorage = async (page: Page, values: Record<string, unknown>) => {
   await page.goto('/')
   await page.evaluate((entries) => {
+    // 保留已提供的內建 ID，讓 fixture 表示使用者移除內建內容後的自訂題庫。
+    const starterEntries = Object.entries(localStorage).filter(([key]) => key.startsWith('keylinguaStarter:'))
     localStorage.clear()
+    for (const [key, value] of starterEntries) localStorage.setItem(key, value)
     for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, JSON.stringify(value))
   }, values)
 }

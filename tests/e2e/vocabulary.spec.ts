@@ -374,7 +374,7 @@ test.describe('Vocabulary Library UI', () => {
   })
 
   test('管理頁將來源篩選限制在目前題庫且 dark mode 文字可讀', async ({ page }) => {
-    await page.goto('/ja/vocabulary/manage')
+    await page.goto('/ja/vocabulary/manage?level=N5')
     const shoppingSet = page.getByTestId('vocabulary-set-card').filter({ hasText: 'N5｜購物單字 100' })
     await shoppingSet.getByRole('button', { name: '編輯' }).click()
     await expect(page.getByTestId('vocabulary-item-card')).toHaveCount(2)
@@ -395,7 +395,7 @@ test.describe('Vocabulary Library UI', () => {
     await page.getByLabel('題庫名稱').fill('N4｜車站與轉乘單字')
     await page.getByLabel('JLPT 等級').selectOption('N4')
     await page.getByRole('button', { name: '建立題庫' }).click()
-    await page.goto('/ja/vocabulary/manage')
+    await page.goto('/ja/vocabulary/manage?level=N4')
     const setCard = page.getByTestId('vocabulary-set-card').filter({ hasText: 'N4｜車站與轉乘單字' })
     await setCard.getByRole('button', { name: '編輯' }).click()
     await page.getByRole('button', { name: '新增單字' }).click()

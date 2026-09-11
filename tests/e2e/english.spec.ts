@@ -244,6 +244,8 @@ test.describe('English physical keyboard and voice selection', () => {
 })
 
 const clearEnglishStorage = async (page: import('@playwright/test').Page) => {
+  // 先完成內建題庫初始化，再建立使用者已清空題庫的測試情境。
+  await page.goto('/')
   await page.addInitScript(() => {
     for (const key of [
       'englishPracticeDocuments',
@@ -385,7 +387,7 @@ test.describe('English language routes and libraries', () => {
     await page.goto('/en/dialogues')
     await expect(page.getByRole('button', { name: '新增' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: '匯入' })).toBeVisible()
-    await expect(page.getByRole('link', { name: '管理' })).toBeVisible()
+    await expect(page.getByRole('button', { name: '管理' })).toBeDisabled()
     await page.getByRole('button', { name: /A2/ }).click()
     const dialogueBack = page.getByTestId('library-back-button')
     await expect(dialogueBack).toHaveText('返回 CEFR 等級')
@@ -396,7 +398,7 @@ test.describe('English language routes and libraries', () => {
     await page.goto('/en/vocabulary')
     await expect(page.getByRole('button', { name: '新增' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: '匯入' })).toBeVisible()
-    await expect(page.getByRole('link', { name: '管理' })).toBeVisible()
+    await expect(page.getByRole('button', { name: '管理' })).toBeDisabled()
     await page.getByRole('button', { name: /A2/ }).click()
     await expect(page.getByTestId('library-back-button')).toHaveText('返回 CEFR 等級')
   })
@@ -473,7 +475,7 @@ test.describe('English language routes and libraries', () => {
     await expect(page.getByRole('heading', { name: 'A1｜餐廳基本對話' })).toBeVisible()
 
     await page.getByRole('link', { name: '管理' }).click()
-    await expect(page).toHaveURL(/\/en\/dialogues\/manage$/)
+    await expect(page).toHaveURL(/\/en\/dialogues\/manage\?level=A1$/)
     await expect(page.getByRole('heading', { name: '管理英文對話' })).toBeVisible()
     const dialogueCard = page.getByTestId(/english-dialogue-card-/).filter({ hasText: 'A1｜餐廳基本對話' })
     await dialogueCard.getByRole('button', { name: '編輯' }).click()

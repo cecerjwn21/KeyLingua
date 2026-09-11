@@ -122,7 +122,10 @@ const scopedEnglishVocabularyLibrary = {
 const seedStorage = async (page: Page, values: Record<string, unknown>) => {
   await page.goto('/')
   await page.evaluate((entries) => {
+    // 保留已提供的內建 ID，讓 fixture 表示使用者移除內建內容後的自訂題庫。
+    const starterEntries = Object.entries(localStorage).filter(([key]) => key.startsWith('keylinguaStarter:'))
     localStorage.clear()
+    for (const [key, value] of starterEntries) localStorage.setItem(key, value)
     for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, JSON.stringify(value))
   }, values)
 }
@@ -265,8 +268,8 @@ test.describe('Typing previous and next contrast', () => {
     await expect(previous).toHaveAttribute('aria-label', /^上一句，快捷鍵：.+/)
     await expect(next).toHaveAttribute('aria-label', /^下一句，快捷鍵：.+/)
     for (const control of [previous, next]) {
-      await expect(control.locator('span > p').first()).toBeVisible()
-      await expect(control.locator('span > p').first()).not.toHaveText('')
+      await expect(control.getByText(/^(上一句|下一句)$/)).toBeVisible()
+      await expect(control.getByText(/^(上一句|下一句)$/)).not.toHaveText('')
       const box = await control.boundingBox()
       expect(box).not.toBeNull()
       expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(390)

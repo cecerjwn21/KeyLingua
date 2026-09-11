@@ -223,6 +223,8 @@ test.describe('四套兩階段匯入流程', () => {
 
   test('Japanese Article 選檔與驗證不寫入，confirm 才寫入，修改後舊驗證失效', async ({ page }) => {
     await page.reload()
+    const beforeImport = await page.evaluate(() => localStorage.getItem('pastedPracticeDocuments'))
+    expect(JSON.parse(beforeImport ?? 'null')).toEqual([])
     await page.getByRole('button', { name: '匯入文章' }).click()
     await page.getByLabel('選擇 JSON 檔案').setInputFiles({
       name: 'n4-izakaya.json',
@@ -231,11 +233,11 @@ test.describe('四套兩階段匯入流程', () => {
     })
     await expect(page.getByLabel('文章 JSON')).toHaveValue(/N4｜居酒屋聊天/)
     await expect(page.getByText('文章驗證成功', { exact: true })).toHaveCount(0)
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('pastedPracticeDocuments'))).toBeNull()
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('pastedPracticeDocuments'))).toBe(beforeImport)
 
     await page.getByRole('button', { name: '驗證文章' }).click()
     await expect(page.getByText('文章驗證成功', { exact: true })).toBeVisible()
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('pastedPracticeDocuments'))).toBeNull()
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('pastedPracticeDocuments'))).toBe(beforeImport)
     await expect(page.getByText('Furigana', { exact: true })).toBeVisible()
 
     await page.getByRole('button', { name: '返回編輯' }).click()
@@ -267,6 +269,8 @@ test.describe('四套兩階段匯入流程', () => {
 
   test('English Dialogue 選檔與驗證不寫入，confirm 才寫入且保留無尾端空白 text', async ({ page }) => {
     await page.goto('/en/dialogues')
+    const beforeImport = await page.evaluate(() => localStorage.getItem('englishPracticeDocuments'))
+    expect(JSON.parse(beforeImport ?? 'null')).toEqual([])
     await page.getByRole('button', { name: '匯入' }).click()
     await page.getByLabel('選擇 JSON 檔案').setInputFiles({
       name: 'a2-shopping.json',
@@ -275,11 +279,11 @@ test.describe('四套兩階段匯入流程', () => {
     })
     await expect(page.locator('textarea')).toHaveValue(/A2｜購物/)
     await expect(page.getByText('對話驗證成功', { exact: true })).toHaveCount(0)
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishPracticeDocuments'))).toBeNull()
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishPracticeDocuments'))).toBe(beforeImport)
 
     await page.getByRole('button', { name: '驗證對話' }).click()
     await expect(page.getByText('對話驗證成功', { exact: true })).toBeVisible()
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishPracticeDocuments'))).toBeNull()
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishPracticeDocuments'))).toBe(beforeImport)
     await page.getByRole('button', { name: '確認匯入對話' }).click()
     const savedText = await page.evaluate(
       () => JSON.parse(localStorage.getItem('englishPracticeDocuments') ?? '[]')[0]?.sentences[0]?.text,
@@ -289,6 +293,8 @@ test.describe('四套兩階段匯入流程', () => {
 
   test('English Vocabulary 選檔與驗證不寫入，confirm 才建立不含 reading 的題庫', async ({ page }) => {
     await page.goto('/en/vocabulary')
+    const beforeImport = await page.evaluate(() => localStorage.getItem('englishVocabularyLibrary'))
+    expect(JSON.parse(beforeImport ?? 'null')).toEqual({ version: 1, sets: [], items: [] })
     await page.getByRole('button', { name: '匯入' }).click()
     await page.getByLabel('選擇 JSON 檔案').setInputFiles({
       name: 'a2-shopping-vocabulary.json',
@@ -297,11 +303,11 @@ test.describe('四套兩階段匯入流程', () => {
     })
     await expect(page.locator('textarea')).toHaveValue(/receipt/)
     await expect(page.getByText('單字題庫驗證成功', { exact: true })).toHaveCount(0)
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishVocabularyLibrary'))).toBeNull()
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishVocabularyLibrary'))).toBe(beforeImport)
 
     await page.getByRole('button', { name: '驗證題庫' }).click()
     await expect(page.getByText('單字題庫驗證成功', { exact: true })).toBeVisible()
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishVocabularyLibrary'))).toBeNull()
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('englishVocabularyLibrary'))).toBe(beforeImport)
     await page.getByRole('button', { name: '確認匯入題庫' }).click()
     const savedItem = await page.evaluate(
       () => JSON.parse(localStorage.getItem('englishVocabularyLibrary') ?? '{"items":[]}').items[0],

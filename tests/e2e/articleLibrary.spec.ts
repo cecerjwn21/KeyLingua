@@ -111,7 +111,7 @@ test.describe('Article Library', () => {
     await page.getByRole('button', { name: /^N4/ }).click()
     await expect(page.getByText('居酒屋裡的第一次聊天', { exact: true })).toBeVisible()
     await page.reload()
-    await page.getByRole('button', { name: /^N4/ }).click()
+    await expect(page).toHaveURL(/\?level=N4$/)
     await expect(page.getByText('居酒屋裡的第一次聊天', { exact: true })).toBeVisible()
 
     const card = page.locator('[data-testid^="article-card-generated-"]').filter({ hasText: '居酒屋裡的第一次聊天' })
@@ -187,7 +187,7 @@ test.describe('Article Library', () => {
 
   test('文章管理頁顯示編輯與刪除，編輯會驗證後以原 id 覆寫並持久化', async ({ page }) => {
     await saveChatGPTArticle(page, chatGPTImportJson)
-    await page.goto('/ja/articles/manage')
+    await page.goto('/ja/articles/manage?level=N4')
 
     const myCard = page.locator('[data-testid^="article-card-generated-"]').filter({ hasText: '居酒屋裡的第一次聊天' })
     await expect(myCard.getByRole('button', { name: '編輯' })).toBeVisible()
@@ -226,7 +226,7 @@ test.describe('Article Library', () => {
   test('無效編輯不覆寫原文章，取消刪除保留文章，刪除 current 後 route guard 導回文章庫', async ({ page }) => {
     await saveChatGPTArticle(page, chatGPTImportJson)
     await saveChatGPTArticle(page, n5DialogueImportJson)
-    await page.goto('/ja/articles/manage')
+    await page.goto('/ja/articles/manage?level=N4')
     const myCard = page.locator('[data-testid^="article-card-generated-"]').filter({ hasText: '居酒屋裡的第一次聊天' })
     await myCard.getByRole('button', { name: '編輯' }).click()
     await page.getByLabel('文章 JSON').fill('{ invalid')
@@ -241,7 +241,7 @@ test.describe('Article Library', () => {
     await page.getByRole('button', { name: /^N4/ }).click()
     await myCard.getByRole('button', { name: '開始練習' }).click()
     await expect(page).toHaveURL(/\/typing$/)
-    await page.goto('/ja/articles/manage')
+    await page.goto('/ja/articles/manage?level=N4')
     await myCard.getByRole('button', { name: '刪除' }).click()
     await expect(page.getByText('確定要刪除這篇文章嗎？', { exact: true })).toBeVisible()
     await page.getByRole('button', { name: '取消' }).click()
@@ -251,11 +251,12 @@ test.describe('Article Library', () => {
     await page.getByRole('button', { name: '確認刪除' }).click()
     await expect(myCard).toHaveCount(0)
     await page.getByRole('link', { name: '返回文章庫' }).click()
+    await page.getByRole('button', { name: '返回文章庫' }).click()
     await page.getByRole('button', { name: /^N5/ }).click()
     await expect(page.getByText('N5 車站對話', { exact: true })).toBeVisible()
     await page.reload()
     await expect(page.getByText('居酒屋裡的第一次聊天', { exact: true })).toHaveCount(0)
-    await page.getByRole('button', { name: /^N5/ }).click()
+    await expect(page).toHaveURL(/\?level=N5$/)
     await expect(page.getByText('N5 車站對話', { exact: true })).toBeVisible()
     await page.goto('/typing')
     await expect(page).toHaveURL(/\/ja\/articles$/)

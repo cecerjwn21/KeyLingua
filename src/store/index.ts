@@ -5,6 +5,11 @@ import { defaultLibraryImportRules, type LibraryImportRules } from '@/pages/Libr
 import { migrateVocabularyLibrary } from '@/pages/Vocabulary/utils/vocabulary'
 import { idDictionaryMap } from '@/resources/dictionary'
 import { practiceDocumentMap } from '@/resources/practiceDocuments'
+import { starterJapaneseArticles } from '@/resources/starter/japaneseArticles'
+import { starterJapaneseVocabulary } from '@/resources/starter/japaneseVocabulary'
+import { starterEnglishDialogues } from '@/resources/starter/englishDialogues'
+import { starterEnglishVocabulary } from '@/resources/starter/englishVocabulary'
+import { seedStarterDocuments, seedStarterVocabulary } from '@/resources/starter/seed'
 import { correctSoundResources, keySoundResources, wrongSoundResources } from '@/resources/soundResource'
 import type {
   Dictionary,
@@ -29,8 +34,14 @@ import { atomWithStorage } from 'jotai/utils'
 
 export const currentDictIdAtom = atomWithStorage('currentDict', 'cet4')
 export const practiceDocumentIdAtom = atomWithStorage<string | null>('practiceDocumentId', null)
-export const pastedPracticeDocumentsAtom = atomWithStorage<PracticeDocument[]>('pastedPracticeDocuments', [])
-export const englishPracticeDocumentsAtom = atomWithStorage<EnglishPracticeDocument[]>('englishPracticeDocuments', [])
+export const pastedPracticeDocumentsAtom = atomWithStorage<PracticeDocument[]>(
+  'pastedPracticeDocuments',
+  seedStarterDocuments(window.localStorage, 'pastedPracticeDocuments', starterJapaneseArticles) ?? [],
+)
+export const englishPracticeDocumentsAtom = atomWithStorage<EnglishPracticeDocument[]>(
+  'englishPracticeDocuments',
+  seedStarterDocuments(window.localStorage, 'englishPracticeDocuments', starterEnglishDialogues) ?? [],
+)
 export const englishPracticeDocumentIdAtom = atomWithStorage<string | null>('englishPracticeDocumentId', null)
 export const englishVocabularySetIdAtom = atomWithStorage<string | null>('englishVocabularySetId', null)
 
@@ -44,11 +55,10 @@ const readStoredJSON = (key: string) => {
 }
 
 const initialVocabularyLibrary = migrateVocabularyLibrary(readStoredJSON('vocabularyLibrary'), readStoredJSON('vocabularyItems'))
-if (readStoredJSON('vocabularyLibrary') === undefined) {
-  window.localStorage.setItem('vocabularyLibrary', JSON.stringify(initialVocabularyLibrary))
-}
+const seededVocabularyLibrary =
+  seedStarterVocabulary(window.localStorage, 'vocabularyLibrary', starterJapaneseVocabulary, initialVocabularyLibrary) ?? initialVocabularyLibrary
 
-export const vocabularyLibraryAtom = atomWithStorage<VocabularyLibrary>('vocabularyLibrary', initialVocabularyLibrary)
+export const vocabularyLibraryAtom = atomWithStorage<VocabularyLibrary>('vocabularyLibrary', seededVocabularyLibrary)
 export const vocabularySetsAtom = atom(
   (get) => get(vocabularyLibraryAtom).sets,
   (get, set, update: VocabularySet[] | ((sets: VocabularySet[]) => VocabularySet[])) => {
@@ -68,7 +78,7 @@ export const vocabularyItemsAtom = atom(
 const emptyEnglishVocabularyLibrary: EnglishVocabularyLibrary = { version: 1, sets: [], items: [] }
 export const englishVocabularyLibraryAtom = atomWithStorage<EnglishVocabularyLibrary>(
   'englishVocabularyLibrary',
-  emptyEnglishVocabularyLibrary,
+  seedStarterVocabulary(window.localStorage, 'englishVocabularyLibrary', starterEnglishVocabulary) ?? emptyEnglishVocabularyLibrary,
 )
 export const englishVocabularySetsAtom = atom(
   (get) => get(englishVocabularyLibraryAtom).sets,
