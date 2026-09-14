@@ -1,0 +1,1582 @@
+{
+  "fixture": "正式站曾缺少 Starter ledger，舊 seed 重建 ledger 並誤標 content version 3 後仍未升級的舊使用者",
+  "localStorage": {
+    "pastedPracticeDocuments": [
+      {
+        "id": "generated-keylingua-starter-ja-article-n5-morning-at-home",
+        "title": "家裡的早晨",
+        "source": "generated",
+        "language": "ja",
+        "jlptLevel": "N5",
+        "scenario": "家裡的早晨",
+        "format": "prose",
+        "sentences": [
+          {
+            "name": "朝です",
+            "notation": "朝(あさ)です",
+            "trans": [
+              "早上了。"
+            ]
+          },
+          {
+            "name": "父は台所にいます",
+            "notation": "父(ちち)は台所(だいどころ)にいます",
+            "trans": [
+              "爸爸在廚房。"
+            ]
+          },
+          {
+            "name": "母はパンを食べます",
+            "notation": "母(はは)はパンを食(た)べます",
+            "trans": [
+              "媽媽吃麵包。"
+            ]
+          },
+          {
+            "name": "私は牛乳を飲みます",
+            "notation": "私(わたし)は牛乳(ぎゅうにゅう)を飲(の)みます",
+            "trans": [
+              "我喝牛奶。"
+            ]
+          },
+          {
+            "name": "パンはおいしいです",
+            "notation": "パンはおいしいです",
+            "trans": [
+              "麵包很好吃。"
+            ]
+          },
+          {
+            "name": "学校へ行きます",
+            "notation": "学校(がっこう)へ行(い)きます",
+            "trans": [
+              "我要去學校。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "generated-keylingua-starter-ja-article-n5-buying-apples",
+        "title": "買蘋果（我的修改）",
+        "source": "generated",
+        "language": "ja",
+        "jlptLevel": "N5",
+        "scenario": "買蘋果",
+        "format": "dialogue",
+        "sentences": [
+          {
+            "name": "りんごはありますか",
+            "notation": "りんごはありますか",
+            "trans": [
+              "有蘋果嗎？"
+            ]
+          },
+          {
+            "name": "はい、こちらです",
+            "notation": "はい、こちらです",
+            "trans": [
+              "有，在這裡。"
+            ]
+          },
+          {
+            "name": "このりんごはいくらですか",
+            "notation": "このりんごはいくらですか",
+            "trans": [
+              "這顆蘋果多少錢？"
+            ]
+          },
+          {
+            "name": "百円です",
+            "notation": "百円(ひゃくえん)です",
+            "trans": [
+              "一百日圓。"
+            ]
+          },
+          {
+            "name": "二つください",
+            "notation": "二(ふた)つください",
+            "trans": [
+              "請給我兩顆。"
+            ]
+          },
+          {
+            "name": "はい、どうぞ",
+            "notation": "はい、どうぞ",
+            "trans": [
+              "好的，請拿。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "user-created-japanese-article",
+        "title": "我的自訂教材",
+        "source": "generated",
+        "language": "ja",
+        "jlptLevel": "N5",
+        "scenario": "公園裡的貓",
+        "format": "prose",
+        "sentences": [
+          {
+            "name": "家の近くに公園があります",
+            "notation": "家(いえ)の近(ちか)くに公園(こうえん)があります",
+            "trans": [
+              "家附近有一座公園。"
+            ]
+          },
+          {
+            "name": "公園は静かです",
+            "notation": "公園(こうえん)は静(しず)かです",
+            "trans": [
+              "公園很安靜。"
+            ]
+          },
+          {
+            "name": "木の下に猫がいます",
+            "notation": "木(き)の下(した)に猫(ねこ)がいます",
+            "trans": [
+              "樹下有一隻貓。"
+            ]
+          },
+          {
+            "name": "小さい猫です",
+            "notation": "小(ちい)さい猫(ねこ)です",
+            "trans": [
+              "是一隻小貓。"
+            ]
+          },
+          {
+            "name": "猫は白いです",
+            "notation": "猫(ねこ)は白(しろ)いです",
+            "trans": [
+              "貓是白色的。"
+            ]
+          },
+          {
+            "name": "私はここで写真を撮ります",
+            "notation": "私(わたし)はここで写真(しゃしん)を撮(と)ります",
+            "trans": [
+              "我在這裡拍照。"
+            ]
+          }
+        ]
+      }
+    ],
+    "englishPracticeDocuments": [
+      {
+        "id": "keylingua-starter-en-dialogue-a1-first-meeting",
+        "title": "第一次見面",
+        "level": "A1",
+        "source": "manual",
+        "createdAt": "2026-09-10T00:00:00.000Z",
+        "sentences": [
+          {
+            "text": "Hello! My name is Mia.",
+            "meaning": "你好！我叫 Mia。",
+            "speaker": "A"
+          },
+          {
+            "text": "Hi, Mia. I'm Ben.",
+            "meaning": "嗨，Mia。我是 Ben。",
+            "speaker": "B"
+          },
+          {
+            "text": "Are you a student?",
+            "meaning": "你是學生嗎？",
+            "speaker": "A"
+          },
+          {
+            "text": "Yes, I am. Are you a student too?",
+            "meaning": "是的。你也是學生嗎？",
+            "speaker": "B"
+          },
+          {
+            "text": "Yes, I'm in Class 2.",
+            "meaning": "對，我在二班。",
+            "speaker": "A"
+          },
+          {
+            "text": "I'm in Class 2 too!",
+            "meaning": "我也在二班！",
+            "speaker": "B"
+          }
+        ]
+      },
+      {
+        "id": "keylingua-starter-en-dialogue-a1-family-photo",
+        "title": "看家人的照片（我的修改）",
+        "level": "A1",
+        "source": "manual",
+        "createdAt": "2026-09-10T00:00:00.000Z",
+        "sentences": [
+          {
+            "text": "Who is this?",
+            "meaning": "這是誰？",
+            "speaker": "A"
+          },
+          {
+            "text": "She is my sister.",
+            "meaning": "她是我姊姊。",
+            "speaker": "B"
+          },
+          {
+            "text": "What is her name?",
+            "meaning": "她叫什麼名字？",
+            "speaker": "A"
+          },
+          {
+            "text": "Her name is Anna.",
+            "meaning": "她叫 Anna。",
+            "speaker": "B"
+          },
+          {
+            "text": "Do you have a brother?",
+            "meaning": "你有兄弟嗎？",
+            "speaker": "A"
+          },
+          {
+            "text": "No, I don't. I have one sister.",
+            "meaning": "沒有。我有一個姊姊。",
+            "speaker": "B"
+          }
+        ]
+      },
+      {
+        "id": "user-created-english-dialogue",
+        "title": "我的自訂教材",
+        "level": "A1",
+        "source": "manual",
+        "createdAt": "2026-09-10T00:00:00.000Z",
+        "sentences": [
+          {
+            "text": "Do you want some bread?",
+            "meaning": "你想吃一點麵包嗎？",
+            "speaker": "A"
+          },
+          {
+            "text": "Yes, please. I'm hungry.",
+            "meaning": "好，麻煩你。我餓了。",
+            "speaker": "B"
+          },
+          {
+            "text": "Do you like eggs?",
+            "meaning": "你喜歡吃蛋嗎？",
+            "speaker": "A"
+          },
+          {
+            "text": "Yes, I do. I eat eggs every day.",
+            "meaning": "喜歡。我每天都吃蛋。",
+            "speaker": "B"
+          },
+          {
+            "text": "Tea or milk?",
+            "meaning": "要茶還是牛奶？",
+            "speaker": "A"
+          },
+          {
+            "text": "Milk, please.",
+            "meaning": "請給我牛奶。",
+            "speaker": "B"
+          }
+        ]
+      }
+    ],
+    "vocabularyLibrary": {
+      "version": 1,
+      "sets": [
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family",
+          "title": "家人與稱呼",
+          "jlptLevel": "N5",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home",
+          "title": "家中的空間（我的修改）",
+          "jlptLevel": "N5",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        {
+          "id": "user-created-japanese-vocabulary",
+          "title": "我的日文單字",
+          "jlptLevel": "N5",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        }
+      ],
+      "items": [
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-01",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "私",
+          "reading": "わたし",
+          "meaning": "我",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-02",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "あなた",
+          "reading": "あなた",
+          "meaning": "你",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-03",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "父",
+          "reading": "ちち",
+          "meaning": "父親（稱自己的父親）",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-04",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "母",
+          "reading": "はは",
+          "meaning": "母親（稱自己的母親）",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-05",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "兄",
+          "reading": "あに",
+          "meaning": "哥哥（稱自己的哥哥）",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-06",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "姉",
+          "reading": "あね",
+          "meaning": "姊姊（稱自己的姊姊）",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-07",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "弟",
+          "reading": "おとうと",
+          "meaning": "弟弟",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-08",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "妹",
+          "reading": "いもうと",
+          "meaning": "妹妹",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-09",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "家族",
+          "reading": "かぞく",
+          "meaning": "家人；家庭",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-family-10",
+          "setId": "keylingua-starter-ja-vocabulary-n5-family",
+          "jlptLevel": "N5",
+          "word": "子供",
+          "reading": "こども",
+          "meaning": "小孩",
+          "source": "manual",
+          "sourceTitle": "家人與稱呼"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-01",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "家",
+          "reading": "いえ",
+          "meaning": "家；房子",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-02",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "部屋",
+          "reading": "へや",
+          "meaning": "房間",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-03",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "玄関",
+          "reading": "げんかん",
+          "meaning": "玄關",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-04",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "台所",
+          "reading": "だいどころ",
+          "meaning": "廚房",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-05",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "お風呂",
+          "reading": "おふろ",
+          "meaning": "浴池；泡澡",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-06",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "トイレ",
+          "reading": "といれ",
+          "meaning": "廁所",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-07",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "窓",
+          "reading": "まど",
+          "meaning": "窗戶",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-08",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "ドア",
+          "reading": "どあ",
+          "meaning": "門",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-09",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "庭",
+          "reading": "にわ",
+          "meaning": "庭院",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "keylingua-starter-ja-vocabulary-n5-home-10",
+          "setId": "keylingua-starter-ja-vocabulary-n5-home",
+          "jlptLevel": "N5",
+          "word": "ベッド",
+          "reading": "べっど",
+          "meaning": "床",
+          "source": "manual",
+          "sourceTitle": "家中的空間"
+        },
+        {
+          "id": "user-created-japanese-vocabulary-item-1",
+          "setId": "user-created-japanese-vocabulary",
+          "jlptLevel": "N5",
+          "word": "ご飯",
+          "reading": "ごはん",
+          "meaning": "白飯；飯食",
+          "source": "manual",
+          "sourceTitle": "每天吃喝的食物"
+        },
+        {
+          "id": "user-created-japanese-vocabulary-item-2",
+          "setId": "user-created-japanese-vocabulary",
+          "jlptLevel": "N5",
+          "word": "パン",
+          "reading": "ぱん",
+          "meaning": "麵包",
+          "source": "manual",
+          "sourceTitle": "每天吃喝的食物"
+        }
+      ],
+      "fixtureMetadata": "正式站舊使用者資料"
+    },
+    "englishVocabularyLibrary": {
+      "version": 1,
+      "sets": [
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family",
+          "title": "我的家人",
+          "level": "A1",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom",
+          "title": "教室裡的物品（我的修改）",
+          "level": "A1",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        {
+          "id": "user-created-english-vocabulary",
+          "title": "My English Words",
+          "level": "A1",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        }
+      ],
+      "items": [
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-01",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "mother",
+          "meaning": "媽媽",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-02",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "father",
+          "meaning": "爸爸",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-03",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "sister",
+          "meaning": "姊妹",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-04",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "brother",
+          "meaning": "兄弟",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-05",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "parent",
+          "meaning": "父親或母親",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-06",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "baby",
+          "meaning": "嬰兒",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-07",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "son",
+          "meaning": "兒子",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-08",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "daughter",
+          "meaning": "女兒",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-09",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "grandmother",
+          "meaning": "祖母；外婆",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-family-10",
+          "setId": "keylingua-starter-en-vocabulary-a1-family",
+          "word": "grandfather",
+          "meaning": "祖父；外公",
+          "source": "manual",
+          "sourceTitle": "我的家人"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-01",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "book",
+          "meaning": "書",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-02",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "pen",
+          "meaning": "筆",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-03",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "pencil",
+          "meaning": "鉛筆",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-04",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "bag",
+          "meaning": "袋子；書包",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-05",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "desk",
+          "meaning": "書桌",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-06",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "chair",
+          "meaning": "椅子",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-07",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "teacher",
+          "meaning": "老師",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-08",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "student",
+          "meaning": "學生",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-09",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "school",
+          "meaning": "學校",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom-10",
+          "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+          "word": "class",
+          "meaning": "課；班級",
+          "source": "manual",
+          "sourceTitle": "教室裡的物品"
+        },
+        {
+          "id": "user-created-english-vocabulary-item-1",
+          "setId": "user-created-english-vocabulary",
+          "word": "bread",
+          "meaning": "麵包",
+          "source": "manual",
+          "sourceTitle": "早餐吃什麼"
+        },
+        {
+          "id": "user-created-english-vocabulary-item-2",
+          "setId": "user-created-english-vocabulary",
+          "word": "egg",
+          "meaning": "蛋",
+          "source": "manual",
+          "sourceTitle": "早餐吃什麼"
+        }
+      ],
+      "fixtureMetadata": "正式站舊使用者資料"
+    },
+    "keylinguaStarterContentVersion:pastedPracticeDocuments": 3,
+    "keylinguaStarterContentVersion:englishPracticeDocuments": 3,
+    "keylinguaStarterContentVersion:vocabularyLibrary": 3,
+    "keylinguaStarterContentVersion:englishVocabularyLibrary": 3,
+    "libraryCompletion": {
+      "japanese:vocabulary:keylingua-starter-ja-vocabulary-n5-family": true,
+      "english:dialogue:keylingua-starter-en-dialogue-a1-first-meeting": true
+    },
+    "customProgress": {
+      "documentId": "keylingua-starter-en-dialogue-a1-first-meeting",
+      "sentence": 4,
+      "typingIndex": 17
+    },
+    "practiceSource": {
+      "language": "english",
+      "practiceType": "dialogue",
+      "id": "keylingua-starter-en-dialogue-a1-first-meeting"
+    },
+    "currentChapter": 4,
+    "articleSpeechConfig": {
+      "voiceURI": "Nanami-custom",
+      "rate": 0.8
+    },
+    "keylinguaStarter:pastedPracticeDocuments": [
+      "generated-keylingua-starter-ja-article-n5-morning-at-home",
+      "generated-keylingua-starter-ja-article-n5-classroom-desk",
+      "generated-keylingua-starter-ja-article-n5-buying-apples",
+      "generated-keylingua-starter-ja-article-n5-park-cat",
+      "generated-keylingua-starter-ja-article-n5-family-photo",
+      "generated-keylingua-starter-ja-article-n5-rainy-day",
+      "generated-keylingua-starter-ja-article-n5-station-location",
+      "generated-keylingua-starter-ja-article-n5-lunch-order",
+      "generated-keylingua-starter-ja-article-n5-my-room",
+      "generated-keylingua-starter-ja-article-n5-library-visit",
+      "generated-keylingua-starter-ja-article-n5-new-shirt",
+      "generated-keylingua-starter-ja-article-n5-sunday-walk",
+      "generated-keylingua-starter-ja-article-n5-bedtime",
+      "generated-keylingua-starter-ja-article-n5-birthday-cake",
+      "generated-keylingua-starter-ja-article-n5-bus-to-school",
+      "generated-keylingua-starter-ja-article-n4-hotel-arrival",
+      "generated-keylingua-starter-ja-article-n4-lost-umbrella",
+      "generated-keylingua-starter-ja-article-n4-first-hot-spring",
+      "generated-keylingua-starter-ja-article-n4-cooking-together",
+      "generated-keylingua-starter-ja-article-n4-weekend-hike",
+      "generated-keylingua-starter-ja-article-n4-new-bicycle",
+      "generated-keylingua-starter-ja-article-n4-seeing-doctor",
+      "generated-keylingua-starter-ja-article-n4-inviting-neighbor",
+      "generated-keylingua-starter-ja-article-n4-train-change",
+      "generated-keylingua-starter-ja-article-n4-language-diary",
+      "generated-keylingua-starter-ja-article-n4-picnic-weather",
+      "generated-keylingua-starter-ja-article-n4-returning-book",
+      "generated-keylingua-starter-ja-article-n4-visiting-grandparents",
+      "generated-keylingua-starter-ja-article-n4-swimming-lesson",
+      "generated-keylingua-starter-ja-article-n4-parcel-at-home",
+      "generated-keylingua-starter-ja-article-n3-rescheduling-meeting",
+      "generated-keylingua-starter-ja-article-n3-sorting-rubbish",
+      "generated-keylingua-starter-ja-article-n3-broken-washer",
+      "generated-keylingua-starter-ja-article-n3-community-cleanup",
+      "generated-keylingua-starter-ja-article-n3-choosing-apartment",
+      "generated-keylingua-starter-ja-article-n3-missed-delivery",
+      "generated-keylingua-starter-ja-article-n3-group-presentation",
+      "generated-keylingua-starter-ja-article-n3-sleep-habits",
+      "generated-keylingua-starter-ja-article-n3-museum-audio",
+      "generated-keylingua-starter-ja-article-n3-rainy-festival",
+      "generated-keylingua-starter-ja-article-n3-polite-complaint",
+      "generated-keylingua-starter-ja-article-n3-budget-for-trip",
+      "generated-keylingua-starter-ja-article-n3-learning-from-mistake",
+      "generated-keylingua-starter-ja-article-n3-local-market",
+      "generated-keylingua-starter-ja-article-n3-remote-friendship",
+      "generated-keylingua-starter-ja-article-n2-flexible-working-hours",
+      "generated-keylingua-starter-ja-article-n2-public-library-renovation",
+      "generated-keylingua-starter-ja-article-n2-tourism-and-residents",
+      "generated-keylingua-starter-ja-article-n2-food-waste-at-cafe",
+      "generated-keylingua-starter-ja-article-n2-online-application-support",
+      "generated-keylingua-starter-ja-article-n2-product-recall-notice",
+      "generated-keylingua-starter-ja-article-n2-regional-bus-service",
+      "generated-keylingua-starter-ja-article-n2-research-survey",
+      "generated-keylingua-starter-ja-article-n2-workplace-handover",
+      "generated-keylingua-starter-ja-article-n2-repair-or-replace",
+      "generated-keylingua-starter-ja-article-n2-disaster-drill-access",
+      "generated-keylingua-starter-ja-article-n2-school-uniform-discussion",
+      "generated-keylingua-starter-ja-article-n2-news-headline",
+      "generated-keylingua-starter-ja-article-n2-supplier-deadline",
+      "generated-keylingua-starter-ja-article-n2-traditional-craft-workshop",
+      "generated-keylingua-starter-ja-article-n1-memory-and-records",
+      "generated-keylingua-starter-ja-article-n1-silence-in-dialogue",
+      "generated-keylingua-starter-ja-article-n1-city-and-absence",
+      "generated-keylingua-starter-ja-article-n1-translation-ambiguity",
+      "generated-keylingua-starter-ja-article-n1-expertise-and-doubt",
+      "generated-keylingua-starter-ja-article-n1-measuring-education",
+      "generated-keylingua-starter-ja-article-n1-algorithmic-convenience",
+      "generated-keylingua-starter-ja-article-n1-apology-and-accountability",
+      "generated-keylingua-starter-ja-article-n1-rest-and-productivity",
+      "generated-keylingua-starter-ja-article-n1-cultural-inheritance",
+      "generated-keylingua-starter-ja-article-n1-public-space-belonging",
+      "generated-keylingua-starter-ja-article-n1-scientific-revision",
+      "generated-keylingua-starter-ja-article-n1-care-and-autonomy",
+      "generated-keylingua-starter-ja-article-n1-archives-and-voices",
+      "generated-keylingua-starter-ja-article-n1-consensus-and-dissent"
+    ],
+    "keylinguaStarter:englishPracticeDocuments": [
+      "keylingua-starter-en-dialogue-a1-first-meeting",
+      "keylingua-starter-en-dialogue-a1-in-class",
+      "keylingua-starter-en-dialogue-a1-family-photo",
+      "keylingua-starter-en-dialogue-a1-breakfast-table",
+      "keylingua-starter-en-dialogue-a1-school-bag",
+      "keylingua-starter-en-dialogue-a1-school-time",
+      "keylingua-starter-en-dialogue-a1-pet-cat",
+      "keylingua-starter-en-dialogue-a1-rainy-day",
+      "keylingua-starter-en-dialogue-a1-buying-apples",
+      "keylingua-starter-en-dialogue-a1-near-the-park",
+      "keylingua-starter-en-dialogue-a1-my-room",
+      "keylingua-starter-en-dialogue-a1-at-the-pool",
+      "keylingua-starter-en-dialogue-a1-morning-routine",
+      "keylingua-starter-en-dialogue-a1-lunch-choice",
+      "keylingua-starter-en-dialogue-a1-after-school",
+      "keylingua-starter-en-dialogue-a2-airport-check-in",
+      "keylingua-starter-en-dialogue-a2-hotel-arrival",
+      "keylingua-starter-en-dialogue-a2-ordering-dinner",
+      "keylingua-starter-en-dialogue-a2-trying-on-shoes",
+      "keylingua-starter-en-dialogue-a2-asking-directions",
+      "keylingua-starter-en-dialogue-a2-last-weekend",
+      "keylingua-starter-en-dialogue-a2-office-message",
+      "keylingua-starter-en-dialogue-a2-holiday-plans",
+      "keylingua-starter-en-dialogue-a2-feeling-unwell",
+      "keylingua-starter-en-dialogue-a2-sharing-housework",
+      "keylingua-starter-en-dialogue-a2-cooking-soup",
+      "keylingua-starter-en-dialogue-a2-joining-a-club",
+      "keylingua-starter-en-dialogue-a2-homework-help",
+      "keylingua-starter-en-dialogue-a2-phone-call",
+      "keylingua-starter-en-dialogue-a2-lost-umbrella",
+      "keylingua-starter-en-dialogue-b1-memorable-trip",
+      "keylingua-starter-en-dialogue-b1-choosing-a-job",
+      "keylingua-starter-en-dialogue-b1-learning-progress",
+      "keylingua-starter-en-dialogue-b1-friendship-distance",
+      "keylingua-starter-en-dialogue-b1-healthier-routine",
+      "keylingua-starter-en-dialogue-b1-less-waste",
+      "keylingua-starter-en-dialogue-b1-film-review",
+      "keylingua-starter-en-dialogue-b1-saving-for-a-trip",
+      "keylingua-starter-en-dialogue-b1-community-garden",
+      "keylingua-starter-en-dialogue-b1-phone-distractions",
+      "keylingua-starter-en-dialogue-b1-city-or-country",
+      "keylingua-starter-en-dialogue-b1-finding-a-flat",
+      "keylingua-starter-en-dialogue-b1-train-cancelled",
+      "keylingua-starter-en-dialogue-b1-birthday-surprise",
+      "keylingua-starter-en-dialogue-b1-first-presentation",
+      "keylingua-starter-en-dialogue-b2-project-scope",
+      "keylingua-starter-en-dialogue-b2-constructive-feedback",
+      "keylingua-starter-en-dialogue-b2-hybrid-work",
+      "keylingua-starter-en-dialogue-b2-suspicious-email",
+      "keylingua-starter-en-dialogue-b2-assessment-design",
+      "keylingua-starter-en-dialogue-b2-bus-service",
+      "keylingua-starter-en-dialogue-b2-faulty-headphones",
+      "keylingua-starter-en-dialogue-b2-news-headline",
+      "keylingua-starter-en-dialogue-b2-office-emissions",
+      "keylingua-starter-en-dialogue-b2-delivery-negotiation",
+      "keylingua-starter-en-dialogue-b2-survey-results",
+      "keylingua-starter-en-dialogue-b2-career-change",
+      "keylingua-starter-en-dialogue-b2-rental-maintenance",
+      "keylingua-starter-en-dialogue-b2-cross-cultural-meeting",
+      "keylingua-starter-en-dialogue-b2-outdoor-event",
+      "keylingua-starter-en-dialogue-c1-strategic-pilot",
+      "keylingua-starter-en-dialogue-c1-automated-decisions",
+      "keylingua-starter-en-dialogue-c1-research-caveats",
+      "keylingua-starter-en-dialogue-c1-team-restructuring",
+      "keylingua-starter-en-dialogue-c1-targeted-support",
+      "keylingua-starter-en-dialogue-c1-respectful-objection",
+      "keylingua-starter-en-dialogue-c1-supplier-resilience",
+      "keylingua-starter-en-dialogue-c1-academic-premise",
+      "keylingua-starter-en-dialogue-c1-delegating-authority",
+      "keylingua-starter-en-dialogue-c1-urban-regeneration",
+      "keylingua-starter-en-dialogue-c1-explaining-uncertainty",
+      "keylingua-starter-en-dialogue-c1-green-claims",
+      "keylingua-starter-en-dialogue-c1-cross-border-partnership",
+      "keylingua-starter-en-dialogue-c1-film-critique",
+      "keylingua-starter-en-dialogue-c1-planning-under-uncertainty"
+    ],
+    "keylinguaStarter:vocabularyLibrary": [
+      "keylingua-starter-ja-vocabulary-n5-family",
+      "keylingua-starter-ja-vocabulary-n5-classroom",
+      "keylingua-starter-ja-vocabulary-n5-home",
+      "keylingua-starter-ja-vocabulary-n5-everyday-food",
+      "keylingua-starter-ja-vocabulary-n5-meals-tableware",
+      "keylingua-starter-ja-vocabulary-n5-daily-time",
+      "keylingua-starter-ja-vocabulary-n5-week-calendar",
+      "keylingua-starter-ja-vocabulary-n5-transport",
+      "keylingua-starter-ja-vocabulary-n5-shopping",
+      "keylingua-starter-ja-vocabulary-n5-weather",
+      "keylingua-starter-ja-vocabulary-n5-body",
+      "keylingua-starter-ja-vocabulary-n5-basic-actions",
+      "keylingua-starter-ja-vocabulary-n5-daily-movement",
+      "keylingua-starter-ja-vocabulary-n5-appearance",
+      "keylingua-starter-ja-vocabulary-n5-position",
+      "keylingua-starter-ja-vocabulary-n4-family-connections",
+      "keylingua-starter-ja-vocabulary-n4-household-items",
+      "keylingua-starter-ja-vocabulary-n4-housework",
+      "keylingua-starter-ja-vocabulary-n4-flavors-seasonings",
+      "keylingua-starter-ja-vocabulary-n4-feeling-unwell",
+      "keylingua-starter-ja-vocabulary-n4-travel-arrangements",
+      "keylingua-starter-ja-vocabulary-n4-town-places",
+      "keylingua-starter-ja-vocabulary-n4-office-life",
+      "keylingua-starter-ja-vocabulary-n4-language-study",
+      "keylingua-starter-ja-vocabulary-n4-leisure",
+      "keylingua-starter-ja-vocabulary-n4-seasons",
+      "keylingua-starter-ja-vocabulary-n4-clothes-accessories",
+      "keylingua-starter-ja-vocabulary-n4-everyday-feelings",
+      "keylingua-starter-ja-vocabulary-n4-useful-descriptions",
+      "keylingua-starter-ja-vocabulary-n4-learning-actions",
+      "keylingua-starter-ja-vocabulary-n3-work-process",
+      "keylingua-starter-ja-vocabulary-n3-learning-ability",
+      "keylingua-starter-ja-vocabulary-n3-personal-finances",
+      "keylingua-starter-ja-vocabulary-n3-communication",
+      "keylingua-starter-ja-vocabulary-n3-relationships",
+      "keylingua-starter-ja-vocabulary-n3-emotional-responses",
+      "keylingua-starter-ja-vocabulary-n3-health-habits",
+      "keylingua-starter-ja-vocabulary-n3-roads-travel",
+      "keylingua-starter-ja-vocabulary-n3-natural-world",
+      "keylingua-starter-ja-vocabulary-n3-news-society",
+      "keylingua-starter-ja-vocabulary-n3-products-shopping",
+      "keylingua-starter-ja-vocabulary-n3-self-evaluation",
+      "keylingua-starter-ja-vocabulary-n3-device-troubleshooting",
+      "keylingua-starter-ja-vocabulary-n3-event-planning",
+      "keylingua-starter-ja-vocabulary-n3-facts-conditions",
+      "keylingua-starter-ja-vocabulary-n2-business-transactions",
+      "keylingua-starter-ja-vocabulary-n2-organization-careers",
+      "keylingua-starter-ja-vocabulary-n2-analytical-discussion",
+      "keylingua-starter-ja-vocabulary-n2-research-writing",
+      "keylingua-starter-ja-vocabulary-n2-public-policy",
+      "keylingua-starter-ja-vocabulary-n2-economic-activity",
+      "keylingua-starter-ja-vocabulary-n2-environmental-action",
+      "keylingua-starter-ja-vocabulary-n2-medical-services",
+      "keylingua-starter-ja-vocabulary-n2-perception-psychology",
+      "keylingua-starter-ja-vocabulary-n2-attitudes-character",
+      "keylingua-starter-ja-vocabulary-n2-process-background",
+      "keylingua-starter-ja-vocabulary-n2-negotiation-cooperation",
+      "keylingua-starter-ja-vocabulary-n2-evaluating-conditions",
+      "keylingua-starter-ja-vocabulary-n2-urban-infrastructure",
+      "keylingua-starter-ja-vocabulary-n2-technology-information",
+      "keylingua-starter-ja-vocabulary-n1-governance",
+      "keylingua-starter-ja-vocabulary-n1-legal-proceedings",
+      "keylingua-starter-ja-vocabulary-n1-corporate-finance",
+      "keylingua-starter-ja-vocabulary-n1-executive-management",
+      "keylingua-starter-ja-vocabulary-n1-scholarly-reasoning",
+      "keylingua-starter-ja-vocabulary-n1-formal-argument",
+      "keylingua-starter-ja-vocabulary-n1-social-structures",
+      "keylingua-starter-ja-vocabulary-n1-diplomacy",
+      "keylingua-starter-ja-vocabulary-n1-ecological-challenges",
+      "keylingua-starter-ja-vocabulary-n1-character-judgment",
+      "keylingua-starter-ja-vocabulary-n1-complex-emotions",
+      "keylingua-starter-ja-vocabulary-n1-rhetorical-expression",
+      "keylingua-starter-ja-vocabulary-n1-developments-obstacles",
+      "keylingua-starter-ja-vocabulary-n1-social-bonds",
+      "keylingua-starter-ja-vocabulary-n1-nuanced-adverbs"
+    ],
+    "keylinguaStarter:englishVocabularyLibrary": [
+      "keylingua-starter-en-vocabulary-a1-family",
+      "keylingua-starter-en-vocabulary-a1-home",
+      "keylingua-starter-en-vocabulary-a1-classroom",
+      "keylingua-starter-en-vocabulary-a1-breakfast",
+      "keylingua-starter-en-vocabulary-a1-food",
+      "keylingua-starter-en-vocabulary-a1-clothes",
+      "keylingua-starter-en-vocabulary-a1-body",
+      "keylingua-starter-en-vocabulary-a1-time",
+      "keylingua-starter-en-vocabulary-a1-weather",
+      "keylingua-starter-en-vocabulary-a1-animals",
+      "keylingua-starter-en-vocabulary-a1-town",
+      "keylingua-starter-en-vocabulary-a1-actions",
+      "keylingua-starter-en-vocabulary-a1-free-time",
+      "keylingua-starter-en-vocabulary-a1-colours",
+      "keylingua-starter-en-vocabulary-a1-feelings",
+      "keylingua-starter-en-vocabulary-a2-airport",
+      "keylingua-starter-en-vocabulary-a2-hotel",
+      "keylingua-starter-en-vocabulary-a2-restaurant",
+      "keylingua-starter-en-vocabulary-a2-shopping",
+      "keylingua-starter-en-vocabulary-a2-directions",
+      "keylingua-starter-en-vocabulary-a2-weekend",
+      "keylingua-starter-en-vocabulary-a2-workday",
+      "keylingua-starter-en-vocabulary-a2-plans",
+      "keylingua-starter-en-vocabulary-a2-health",
+      "keylingua-starter-en-vocabulary-a2-housework",
+      "keylingua-starter-en-vocabulary-a2-cooking",
+      "keylingua-starter-en-vocabulary-a2-hobbies",
+      "keylingua-starter-en-vocabulary-a2-study",
+      "keylingua-starter-en-vocabulary-a2-phone",
+      "keylingua-starter-en-vocabulary-a2-lost-property",
+      "keylingua-starter-en-vocabulary-b1-travel-experiences",
+      "keylingua-starter-en-vocabulary-b1-work-choices",
+      "keylingua-starter-en-vocabulary-b1-learning-habits",
+      "keylingua-starter-en-vocabulary-b1-friendship",
+      "keylingua-starter-en-vocabulary-b1-healthy-routines",
+      "keylingua-starter-en-vocabulary-b1-environment",
+      "keylingua-starter-en-vocabulary-b1-films",
+      "keylingua-starter-en-vocabulary-b1-spending",
+      "keylingua-starter-en-vocabulary-b1-neighbourhood",
+      "keylingua-starter-en-vocabulary-b1-technology-habits",
+      "keylingua-starter-en-vocabulary-b1-opinions",
+      "keylingua-starter-en-vocabulary-b1-moving-home",
+      "keylingua-starter-en-vocabulary-b1-unexpected-events",
+      "keylingua-starter-en-vocabulary-b1-celebrations",
+      "keylingua-starter-en-vocabulary-b1-personal-growth",
+      "keylingua-starter-en-vocabulary-b2-project-planning",
+      "keylingua-starter-en-vocabulary-b2-workplace-feedback",
+      "keylingua-starter-en-vocabulary-b2-remote-work",
+      "keylingua-starter-en-vocabulary-b2-digital-security",
+      "keylingua-starter-en-vocabulary-b2-education",
+      "keylingua-starter-en-vocabulary-b2-public-transport",
+      "keylingua-starter-en-vocabulary-b2-consumer-rights",
+      "keylingua-starter-en-vocabulary-b2-media-literacy",
+      "keylingua-starter-en-vocabulary-b2-climate-action",
+      "keylingua-starter-en-vocabulary-b2-negotiation",
+      "keylingua-starter-en-vocabulary-b2-research",
+      "keylingua-starter-en-vocabulary-b2-career-development",
+      "keylingua-starter-en-vocabulary-b2-housing",
+      "keylingua-starter-en-vocabulary-b2-cultural-exchange",
+      "keylingua-starter-en-vocabulary-b2-event-planning",
+      "keylingua-starter-en-vocabulary-c1-strategic-decisions",
+      "keylingua-starter-en-vocabulary-c1-ethical-technology",
+      "keylingua-starter-en-vocabulary-c1-evidence-evaluation",
+      "keylingua-starter-en-vocabulary-c1-organisational-change",
+      "keylingua-starter-en-vocabulary-c1-public-policy",
+      "keylingua-starter-en-vocabulary-c1-diplomatic-disagreement",
+      "keylingua-starter-en-vocabulary-c1-economic-resilience",
+      "keylingua-starter-en-vocabulary-c1-academic-argument",
+      "keylingua-starter-en-vocabulary-c1-leadership",
+      "keylingua-starter-en-vocabulary-c1-urban-futures",
+      "keylingua-starter-en-vocabulary-c1-communication",
+      "keylingua-starter-en-vocabulary-c1-sustainability-claims",
+      "keylingua-starter-en-vocabulary-c1-cross-border-work",
+      "keylingua-starter-en-vocabulary-c1-creative-critique",
+      "keylingua-starter-en-vocabulary-c1-uncertain-futures"
+    ]
+  },
+  "expected": {
+    "officialJapaneseVocabularyId": "keylingua-starter-ja-vocabulary-n5-family",
+    "officialEnglishVocabularyId": "keylingua-starter-en-vocabulary-a1-family",
+    "officialJapaneseArticleId": "generated-keylingua-starter-ja-article-n5-morning-at-home",
+    "officialEnglishDialogueId": "keylingua-starter-en-dialogue-a1-first-meeting",
+    "officialJapaneseVocabularyTitle": "家人與稱呼",
+    "userCreatedJapaneseVocabularyTitle": "我的日文單字",
+    "deletedStarterIds": [
+      {
+        "storageKey": "pastedPracticeDocuments",
+        "id": "generated-keylingua-starter-ja-article-n5-classroom-desk"
+      },
+      {
+        "storageKey": "englishPracticeDocuments",
+        "id": "keylingua-starter-en-dialogue-a1-in-class"
+      },
+      {
+        "storageKey": "vocabularyLibrary",
+        "id": "keylingua-starter-ja-vocabulary-n5-classroom"
+      },
+      {
+        "storageKey": "englishVocabularyLibrary",
+        "id": "keylingua-starter-en-vocabulary-a1-home"
+      }
+    ],
+    "preservedStorage": {
+      "libraryCompletion": {
+        "japanese:vocabulary:keylingua-starter-ja-vocabulary-n5-family": true,
+        "english:dialogue:keylingua-starter-en-dialogue-a1-first-meeting": true
+      },
+      "customProgress": {
+        "documentId": "keylingua-starter-en-dialogue-a1-first-meeting",
+        "sentence": 4,
+        "typingIndex": 17
+      },
+      "practiceSource": {
+        "language": "english",
+        "practiceType": "dialogue",
+        "id": "keylingua-starter-en-dialogue-a1-first-meeting"
+      },
+      "currentChapter": 4,
+      "articleSpeechConfig": {
+        "voiceURI": "Nanami-custom",
+        "rate": 0.8
+      }
+    },
+    "preservedUnits": [
+      {
+        "storageKey": "pastedPracticeDocuments",
+        "id": "generated-keylingua-starter-ja-article-n5-buying-apples",
+        "value": {
+          "id": "generated-keylingua-starter-ja-article-n5-buying-apples",
+          "title": "買蘋果（我的修改）",
+          "source": "generated",
+          "language": "ja",
+          "jlptLevel": "N5",
+          "scenario": "買蘋果",
+          "format": "dialogue",
+          "sentences": [
+            {
+              "name": "りんごはありますか",
+              "notation": "りんごはありますか",
+              "trans": [
+                "有蘋果嗎？"
+              ]
+            },
+            {
+              "name": "はい、こちらです",
+              "notation": "はい、こちらです",
+              "trans": [
+                "有，在這裡。"
+              ]
+            },
+            {
+              "name": "このりんごはいくらですか",
+              "notation": "このりんごはいくらですか",
+              "trans": [
+                "這顆蘋果多少錢？"
+              ]
+            },
+            {
+              "name": "百円です",
+              "notation": "百円(ひゃくえん)です",
+              "trans": [
+                "一百日圓。"
+              ]
+            },
+            {
+              "name": "二つください",
+              "notation": "二(ふた)つください",
+              "trans": [
+                "請給我兩顆。"
+              ]
+            },
+            {
+              "name": "はい、どうぞ",
+              "notation": "はい、どうぞ",
+              "trans": [
+                "好的，請拿。"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "storageKey": "pastedPracticeDocuments",
+        "id": "user-created-japanese-article",
+        "value": {
+          "id": "user-created-japanese-article",
+          "title": "我的自訂教材",
+          "source": "generated",
+          "language": "ja",
+          "jlptLevel": "N5",
+          "scenario": "公園裡的貓",
+          "format": "prose",
+          "sentences": [
+            {
+              "name": "家の近くに公園があります",
+              "notation": "家(いえ)の近(ちか)くに公園(こうえん)があります",
+              "trans": [
+                "家附近有一座公園。"
+              ]
+            },
+            {
+              "name": "公園は静かです",
+              "notation": "公園(こうえん)は静(しず)かです",
+              "trans": [
+                "公園很安靜。"
+              ]
+            },
+            {
+              "name": "木の下に猫がいます",
+              "notation": "木(き)の下(した)に猫(ねこ)がいます",
+              "trans": [
+                "樹下有一隻貓。"
+              ]
+            },
+            {
+              "name": "小さい猫です",
+              "notation": "小(ちい)さい猫(ねこ)です",
+              "trans": [
+                "是一隻小貓。"
+              ]
+            },
+            {
+              "name": "猫は白いです",
+              "notation": "猫(ねこ)は白(しろ)いです",
+              "trans": [
+                "貓是白色的。"
+              ]
+            },
+            {
+              "name": "私はここで写真を撮ります",
+              "notation": "私(わたし)はここで写真(しゃしん)を撮(と)ります",
+              "trans": [
+                "我在這裡拍照。"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "storageKey": "englishPracticeDocuments",
+        "id": "keylingua-starter-en-dialogue-a1-family-photo",
+        "value": {
+          "id": "keylingua-starter-en-dialogue-a1-family-photo",
+          "title": "看家人的照片（我的修改）",
+          "level": "A1",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z",
+          "sentences": [
+            {
+              "text": "Who is this?",
+              "meaning": "這是誰？",
+              "speaker": "A"
+            },
+            {
+              "text": "She is my sister.",
+              "meaning": "她是我姊姊。",
+              "speaker": "B"
+            },
+            {
+              "text": "What is her name?",
+              "meaning": "她叫什麼名字？",
+              "speaker": "A"
+            },
+            {
+              "text": "Her name is Anna.",
+              "meaning": "她叫 Anna。",
+              "speaker": "B"
+            },
+            {
+              "text": "Do you have a brother?",
+              "meaning": "你有兄弟嗎？",
+              "speaker": "A"
+            },
+            {
+              "text": "No, I don't. I have one sister.",
+              "meaning": "沒有。我有一個姊姊。",
+              "speaker": "B"
+            }
+          ]
+        }
+      },
+      {
+        "storageKey": "englishPracticeDocuments",
+        "id": "user-created-english-dialogue",
+        "value": {
+          "id": "user-created-english-dialogue",
+          "title": "我的自訂教材",
+          "level": "A1",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z",
+          "sentences": [
+            {
+              "text": "Do you want some bread?",
+              "meaning": "你想吃一點麵包嗎？",
+              "speaker": "A"
+            },
+            {
+              "text": "Yes, please. I'm hungry.",
+              "meaning": "好，麻煩你。我餓了。",
+              "speaker": "B"
+            },
+            {
+              "text": "Do you like eggs?",
+              "meaning": "你喜歡吃蛋嗎？",
+              "speaker": "A"
+            },
+            {
+              "text": "Yes, I do. I eat eggs every day.",
+              "meaning": "喜歡。我每天都吃蛋。",
+              "speaker": "B"
+            },
+            {
+              "text": "Tea or milk?",
+              "meaning": "要茶還是牛奶？",
+              "speaker": "A"
+            },
+            {
+              "text": "Milk, please.",
+              "meaning": "請給我牛奶。",
+              "speaker": "B"
+            }
+          ]
+        }
+      },
+      {
+        "storageKey": "vocabularyLibrary",
+        "id": "keylingua-starter-ja-vocabulary-n5-home",
+        "value": {
+          "id": "keylingua-starter-ja-vocabulary-n5-home",
+          "title": "家中的空間（我的修改）",
+          "jlptLevel": "N5",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        "items": [
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-01",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "家",
+            "reading": "いえ",
+            "meaning": "家；房子",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-02",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "部屋",
+            "reading": "へや",
+            "meaning": "房間",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-03",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "玄関",
+            "reading": "げんかん",
+            "meaning": "玄關",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-04",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "台所",
+            "reading": "だいどころ",
+            "meaning": "廚房",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-05",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "お風呂",
+            "reading": "おふろ",
+            "meaning": "浴池；泡澡",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-06",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "トイレ",
+            "reading": "といれ",
+            "meaning": "廁所",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-07",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "窓",
+            "reading": "まど",
+            "meaning": "窗戶",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-08",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "ドア",
+            "reading": "どあ",
+            "meaning": "門",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-09",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "庭",
+            "reading": "にわ",
+            "meaning": "庭院",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          },
+          {
+            "id": "keylingua-starter-ja-vocabulary-n5-home-10",
+            "setId": "keylingua-starter-ja-vocabulary-n5-home",
+            "jlptLevel": "N5",
+            "word": "ベッド",
+            "reading": "べっど",
+            "meaning": "床",
+            "source": "manual",
+            "sourceTitle": "家中的空間"
+          }
+        ]
+      },
+      {
+        "storageKey": "vocabularyLibrary",
+        "id": "user-created-japanese-vocabulary",
+        "value": {
+          "id": "user-created-japanese-vocabulary",
+          "title": "我的日文單字",
+          "jlptLevel": "N5",
+          "source": "manual",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        "items": [
+          {
+            "id": "user-created-japanese-vocabulary-item-1",
+            "setId": "user-created-japanese-vocabulary",
+            "jlptLevel": "N5",
+            "word": "ご飯",
+            "reading": "ごはん",
+            "meaning": "白飯；飯食",
+            "source": "manual",
+            "sourceTitle": "每天吃喝的食物"
+          },
+          {
+            "id": "user-created-japanese-vocabulary-item-2",
+            "setId": "user-created-japanese-vocabulary",
+            "jlptLevel": "N5",
+            "word": "パン",
+            "reading": "ぱん",
+            "meaning": "麵包",
+            "source": "manual",
+            "sourceTitle": "每天吃喝的食物"
+          }
+        ]
+      },
+      {
+        "storageKey": "englishVocabularyLibrary",
+        "id": "keylingua-starter-en-vocabulary-a1-classroom",
+        "value": {
+          "id": "keylingua-starter-en-vocabulary-a1-classroom",
+          "title": "教室裡的物品（我的修改）",
+          "level": "A1",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        "items": [
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-01",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "book",
+            "meaning": "書",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-02",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "pen",
+            "meaning": "筆",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-03",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "pencil",
+            "meaning": "鉛筆",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-04",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "bag",
+            "meaning": "袋子；書包",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-05",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "desk",
+            "meaning": "書桌",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-06",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "chair",
+            "meaning": "椅子",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-07",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "teacher",
+            "meaning": "老師",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-08",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "student",
+            "meaning": "學生",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-09",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "school",
+            "meaning": "學校",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          },
+          {
+            "id": "keylingua-starter-en-vocabulary-a1-classroom-10",
+            "setId": "keylingua-starter-en-vocabulary-a1-classroom",
+            "word": "class",
+            "meaning": "課；班級",
+            "source": "manual",
+            "sourceTitle": "教室裡的物品"
+          }
+        ]
+      },
+      {
+        "storageKey": "englishVocabularyLibrary",
+        "id": "user-created-english-vocabulary",
+        "value": {
+          "id": "user-created-english-vocabulary",
+          "title": "My English Words",
+          "level": "A1",
+          "createdAt": "2026-09-10T00:00:00.000Z"
+        },
+        "items": [
+          {
+            "id": "user-created-english-vocabulary-item-1",
+            "setId": "user-created-english-vocabulary",
+            "word": "bread",
+            "meaning": "麵包",
+            "source": "manual",
+            "sourceTitle": "早餐吃什麼"
+          },
+          {
+            "id": "user-created-english-vocabulary-item-2",
+            "setId": "user-created-english-vocabulary",
+            "word": "egg",
+            "meaning": "蛋",
+            "source": "manual",
+            "sourceTitle": "早餐吃什麼"
+          }
+        ]
+      }
+    ]
+  }
+}

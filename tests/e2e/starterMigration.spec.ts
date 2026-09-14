@@ -5,6 +5,7 @@ import { starterJapaneseVocabulary } from '../../src/resources/starter/japaneseV
 import released from '../../src/resources/starter/legacyStarterContent.json'
 import { seedStarterDocuments, seedStarterVocabulary, starterLedgerKey } from '../../src/resources/starter/seed'
 import legacy from './fixtures/starter-v1.json'
+import productionUser from './fixtures/starter-v3-missed-user.json'
 import { expect, test } from '@playwright/test'
 
 const memoryStorage = (values: Record<string, unknown>) => {
@@ -46,15 +47,17 @@ for (const key of ['pastedPracticeDocuments', 'englishPracticeDocuments'] as con
     expect(result?.[2]).toEqual(custom)
     expect(result?.some(({ id }) => id === old[2].id)).toBe(false)
     for (const [name, value] of Object.entries(settings)) expect(storage.getItem(name)).toBe(JSON.stringify(value))
-    expect(storage.getItem(versionKey(key))).toBe('3')
+    expect(storage.getItem(versionKey(key))).toBe('4')
     storage.writes.length = 0
     expect(seedStarterDocuments(storage, key, next)).toEqual(result)
     expect(storage.writes).toEqual([])
   })
-  test(`${key} 沒有官方領取紀錄的同 ID 自訂文章不覆寫`, () => {
-    const storage = memoryStorage({ [key]: [old[0]] })
-    expect(seedStarterDocuments(storage, key, next)?.[0]).toEqual(old[0])
-    expect(seedStarterDocuments(storage, key, next)?.[0]).toEqual(old[0])
+  test(`${key} 沒有領取紀錄時以 stable ID 與完整舊快照補認官方內容，實際編輯仍保留`, () => {
+    const edited = { ...clone(old[1]), title: '使用者改名' }
+    const storage = memoryStorage({ [key]: [old[0], edited] })
+    const result = seedStarterDocuments(storage, key, next)
+    expect(result?.[0]).toEqual(next[0])
+    expect(result?.[1]).toEqual(edited)
   })
   test(`${key} 新版本標記寫入失敗會完整回復，重試可升級`, () => {
     const storage = memoryStorage({ [key]: old, [starterLedgerKey(key)]: old.map(({ id }) => id) })
@@ -71,7 +74,7 @@ for (const key of ['pastedPracticeDocuments', 'englishPracticeDocuments'] as con
     expect(seedStarterDocuments(storage, key, next)).toEqual(next)
   })
   test(`${key} 損壞或未來版本的版本標記不更動任何資料`, () => {
-    for (const raw of ['{broken', 'null', '"3"', '4']) {
+    for (const raw of ['{broken', 'null', '"3"', '5']) {
       const storage = memoryStorage({ [key]: old, [starterLedgerKey(key)]: old.map(({ id }) => id) })
       storage.data.set(versionKey(key), raw)
       expect(seedStarterDocuments(storage, key, next)).toBeUndefined()
@@ -113,6 +116,23 @@ for (const key of ['vocabularyLibrary', 'englishVocabularyLibrary'] as const) {
     storage.writes.length = 0
     expect(seedStarterVocabulary(storage, key, next)).toEqual(result)
     expect(storage.writes).toEqual([])
+  })
+  test(`${key} 缺少領取紀錄且已誤標 v3 時仍補認完整官方詞庫，缺席與編輯單元保留`, () => {
+    const editedSet = { ...clone(old.sets[1]), title: '使用者改名' }
+    const current = {
+      version: 1 as const,
+      sets: [clone(old.sets[0]), editedSet],
+      items: clone(old.items.filter(({ setId }: any) => setId === old.sets[0].id || setId === old.sets[1].id)),
+    }
+    const storage = memoryStorage({ [key]: current, [versionKey(key)]: 3 })
+    const result = seedStarterVocabulary(storage, key, next) as any
+    expect(result.sets[0]).toEqual(next.sets[0])
+    expect(result.items.filter(({ setId }: any) => setId === old.sets[0].id)).toHaveLength(11)
+    expect(result.sets[1]).toEqual(editedSet)
+    expect(result.items.filter(({ setId }: any) => setId === old.sets[1].id)).toEqual(
+      current.items.filter(({ setId }: any) => setId === old.sets[1].id),
+    )
+    expect(result.sets.some(({ id }: any) => id === old.sets[2].id)).toBe(false)
   })
   test(`${key} 升級新增 item ID 碰撞使用者項目時整組保留`, () => {
     const current = clone(old)
@@ -216,6 +236,83 @@ test('舊使用者啟動本機頁面後四類官方內容更新，完成紀錄�
   ).toContainText('已完成')
 })
 
+test('正式站缺少領取紀錄且已誤標 v3 的舊使用者仍可安全補升級', async ({ page }) => {
+  const fixture = clone(productionUser) as any
+  await page.addInitScript((values) => {
+    for (const [key, value] of Object.entries(values)) localStorage.setItem(key, JSON.stringify(value))
+  }, fixture.localStorage)
+
+  await page.goto('/ja/vocabulary?level=N5')
+
+  const keys = Object.keys(fixture.localStorage)
+  const read = () =>
+    page.evaluate((storageKeys) => Object.fromEntries(storageKeys.map((key) => [key, JSON.parse(localStorage.getItem(key)!)])), keys)
+  const migrated = (await read()) as any
+  const officialJapaneseVocabularyId = fixture.expected.officialJapaneseVocabularyId
+  const officialEnglishVocabularyId = fixture.expected.officialEnglishVocabularyId
+  const officialJapaneseArticleId = fixture.expected.officialJapaneseArticleId
+  const officialEnglishDialogueId = fixture.expected.officialEnglishDialogueId
+
+  expect(
+    fixture.localStorage.vocabularyLibrary.items.filter(({ setId }: any) => setId === officialJapaneseVocabularyId),
+  ).toHaveLength(10)
+  expect(
+    fixture.localStorage.englishVocabularyLibrary.items.filter(({ setId }: any) => setId === officialEnglishVocabularyId),
+  ).toHaveLength(10)
+  expect(
+    fixture.localStorage.englishPracticeDocuments.find(({ id }: any) => id === officialEnglishDialogueId).sentences,
+  ).toHaveLength(6)
+
+  expect(migrated.vocabularyLibrary.sets.find(({ id }: any) => id === officialJapaneseVocabularyId)?.id).toBe(
+    officialJapaneseVocabularyId,
+  )
+  expect(migrated.vocabularyLibrary.items.filter(({ setId }: any) => setId === officialJapaneseVocabularyId)).toHaveLength(50)
+  expect(migrated.englishVocabularyLibrary.items.filter(({ setId }: any) => setId === officialEnglishVocabularyId)).toHaveLength(50)
+  expect(
+    migrated.pastedPracticeDocuments.find(({ id }: any) => id === officialJapaneseArticleId)?.sentences,
+  ).toHaveLength(starterJapaneseArticles.find(({ id }) => id === officialJapaneseArticleId)!.sentences.length)
+  expect(starterJapaneseArticles.find(({ id }) => id === officialJapaneseArticleId)!.sentences.length).toBeGreaterThanOrEqual(12)
+  expect(starterJapaneseArticles.find(({ id }) => id === officialJapaneseArticleId)!.sentences.length).toBeLessThanOrEqual(14)
+  expect(
+    migrated.englishPracticeDocuments.find(({ id }: any) => id === officialEnglishDialogueId)?.sentences,
+  ).toHaveLength(starterEnglishDialogues.find(({ id }) => id === officialEnglishDialogueId)!.sentences.length)
+  expect(starterEnglishDialogues.find(({ id }) => id === officialEnglishDialogueId)!.sentences.length).toBeGreaterThanOrEqual(12)
+  expect(starterEnglishDialogues.find(({ id }) => id === officialEnglishDialogueId)!.sentences.length).toBeLessThanOrEqual(16)
+
+  for (const id of fixture.expected.deletedStarterIds) {
+    const exists = Array.isArray(migrated[id.storageKey])
+      ? migrated[id.storageKey].some((unit: any) => unit.id === id.id)
+      : migrated[id.storageKey].sets.some((set: any) => set.id === id.id)
+    expect(exists).toBe(false)
+  }
+  for (const [key, value] of Object.entries(fixture.expected.preservedStorage)) expect(migrated[key]).toEqual(value)
+  for (const unit of fixture.expected.preservedUnits) {
+    const library = migrated[unit.storageKey]
+    const actual = Array.isArray(library)
+      ? library.find(({ id }: any) => id === unit.id)
+      : library.sets.find(({ id }: any) => id === unit.id)
+    expect(actual).toEqual(unit.value)
+    if (unit.items) expect(library.items.filter(({ setId }: any) => setId === unit.id)).toEqual(unit.items)
+  }
+
+  const officialJapaneseVocabularyTitle = starterJapaneseVocabulary.sets.find(
+    ({ id }) => id === officialJapaneseVocabularyId,
+  )!.title
+  const officialCard = page.getByTestId('vocabulary-set-card').filter({ hasText: officialJapaneseVocabularyTitle })
+  await expect(officialCard).toContainText('50 個單字')
+  await expect(officialCard).toContainText('來源：內建 Starter')
+  const customCard = page.getByTestId('vocabulary-set-card').filter({ hasText: fixture.expected.userCreatedJapaneseVocabularyTitle })
+  await expect(customCard).toContainText('來源：手動新增')
+
+  await page.reload()
+  expect(await read()).toEqual(migrated)
+  for (const storageKey of ['pastedPracticeDocuments', 'englishPracticeDocuments', 'vocabularyLibrary', 'englishVocabularyLibrary']) {
+    const library = migrated[storageKey]
+    const ids = (Array.isArray(library) ? library : library.sets).map(({ id }: any) => id)
+    expect(new Set(ids).size).toBe(ids.length)
+  }
+})
+
 test('初次發行與標點校訂版文章都可升級；版本完成後不再覆寫還原成舊內容的使用者編輯', () => {
   for (const key of ['pastedPracticeDocuments', 'englishPracticeDocuments'] as const) {
     const previous = legacy[key] as any[]
@@ -246,7 +343,7 @@ test('舊資料有未知欄位或重複官方 ID 時保守保留，不以更新�
 test('已有版本且內容不變時保留原始 JSON 空白，完全零寫入', () => {
   const key = 'pastedPracticeDocuments'
   const old = legacy[key]
-  const storage = memoryStorage({ [key]: old, [starterLedgerKey(key)]: old.map(({ id }) => id), [versionKey(key)]: 3 })
+  const storage = memoryStorage({ [key]: old, [starterLedgerKey(key)]: old.map(({ id }) => id), [versionKey(key)]: 4 })
   const raw = JSON.stringify(old, null, 2)
   storage.data.set(key, raw)
   expect(seedStarterDocuments(storage, key, old)).toEqual(old)

@@ -16,6 +16,7 @@ import useLibraryLevelRoute from '@/components/useLibraryLevelRoute'
 import JsonFilePicker from '@/pages/LibraryImport/JsonFilePicker'
 import PromptDisclosure from '@/pages/LibraryImport/PromptDisclosure'
 import ValidationResult from '@/pages/LibraryImport/ValidationResult'
+import { starterJapaneseVocabulary } from '@/resources/starter/japaneseVocabulary'
 import {
   currentVocabularySetIdAtom,
   englishPracticeDocumentIdAtom,
@@ -38,7 +39,9 @@ type WordEditorState = Pick<VocabularyItem, 'word' | 'reading' | 'meaning' | 'so
 
 const createId = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 const blankWordEditor = (): WordEditorState => ({ word: '', reading: '', meaning: '', source: 'manual', sourceTitle: undefined })
-const sourceLabel = (source: VocabularyItem['source']) => (source === 'article' ? '來自文章' : '手動新增')
+const starterVocabularySetIds = new Set(starterJapaneseVocabulary.sets.map(({ id }) => id))
+const sourceLabel = (source: VocabularyItem['source'], setId?: string) =>
+  setId && starterVocabularySetIds.has(setId) ? '內建 Starter' : source === 'article' ? '來自文章' : '手動新增'
 
 const VocabularySetCard = ({
   set,
@@ -248,6 +251,7 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
   }
 
   const sourceSummary = (set: VocabularySet) => {
+    if (starterVocabularySetIds.has(set.id)) return '內建 Starter'
     const sources = new Set(library.items.filter((item) => item.setId === set.id).map((item) => item.source ?? 'manual'))
     if (sources.size > 1) return '混合來源'
     return sources.has('article') ? '來自文章' : '手動新增'
@@ -359,7 +363,7 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                     <p className="mt-2 text-gray-600 dark:text-gray-300">{item.meaning}</p>
                     <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
                       <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                        {sourceLabel(item.source)}
+                        {sourceLabel(item.source, item.setId)}
                       </span>
                       {item.sourceTitle && <span className="text-gray-500 dark:text-gray-400">{item.sourceTitle}</span>}
                     </div>

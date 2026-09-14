@@ -13,6 +13,19 @@ test('全新使用者第一次開啟就有四類各 75 個可選單元', async (
     libraryKeys,
   )
   expect(counts).toEqual([75, 75, 75, 75])
+  const latestContent = await page.evaluate(() => ({
+    japaneseArticles: JSON.parse(localStorage.getItem('pastedPracticeDocuments') ?? '[]'),
+    japaneseVocabulary: JSON.parse(localStorage.getItem('vocabularyLibrary') ?? 'null'),
+    englishDialogues: JSON.parse(localStorage.getItem('englishPracticeDocuments') ?? '[]'),
+    englishVocabulary: JSON.parse(localStorage.getItem('englishVocabularyLibrary') ?? 'null'),
+  }))
+  expect(latestContent.japaneseArticles.every(({ sentences }: any) => sentences.length >= 12 && sentences.length <= 14)).toBe(true)
+  expect(latestContent.englishDialogues.every(({ sentences }: any) => sentences.length >= 12 && sentences.length <= 16)).toBe(true)
+  for (const library of [latestContent.japaneseVocabulary, latestContent.englishVocabulary]) {
+    expect(
+      library.sets.every(({ id }: any) => library.items.filter(({ setId }: any) => setId === id).length === 50),
+    ).toBe(true)
+  }
   for (const [route, level] of [
     ['/ja/articles', 'N5'],
     ['/ja/vocabulary', 'N5'],

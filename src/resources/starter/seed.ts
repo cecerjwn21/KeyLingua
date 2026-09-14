@@ -6,8 +6,8 @@ type Vocabulary<S, I> = { version: 1; sets: S[]; items: I[] }
 
 export const starterLedgerKey = (key: string) => `keylinguaStarter:${key}`
 const contentVersionKey = (key: string) => `keylinguaStarterContentVersion:${key}`
-// 1：初次發行；2：句尾與英文自然度校訂；3：50 詞與完整情境。
-const contentVersion = 3
+// 1：初次發行；2：句尾與英文自然度校訂；3：50 詞與完整情境；4：修復曾誤標 v3 的舊資料。
+const contentVersion = 4
 const legacyContent: Record<string, Record<string, string[]>> = legacyStarterContent
 const hasId = (value: unknown): value is Identified =>
   Boolean(value) && typeof value === 'object' && typeof (value as Identified).id === 'string'
@@ -49,6 +49,16 @@ const canonical = (value: unknown): unknown => {
 const isUneditedStarter = (key: string, id: string, value: unknown) =>
   legacyContent[key]?.[id]?.includes(JSON.stringify(canonical(value))) ?? false
 
+// 舊正式站可能沒有 ledger，或曾在未升級內容時重建 ledger 並寫入 v3。
+// ledger 缺失時，版本或現存 stable ID 可證明曾領取 Starter；歷史 ID 都視為已領取，缺席者即 tombstone。
+const claimedStarterIds = (key: string, currentIds: string[], seen: string[], version: number | undefined) => {
+  const historical = Object.keys(legacyContent[key] ?? {})
+  const historicalSet = new Set(historical)
+  const hasStarterHistory =
+    seen.length === 0 && ((version !== undefined && version > 0) || currentIds.some((id) => historicalSet.has(id)))
+  return new Set(hasStarterHistory ? [...seen, ...historical] : seen)
+}
+
 // 題庫、領取紀錄、版本採同一次寫入流程；任一步失敗便回復已成功寫入的原始字串。
 const persist = (storage: StorageAccess, key: string, merged: unknown, seen: string[], ids: string[], version: number | undefined) => {
   const next = Array.from(new Set([...seen, ...ids]))
@@ -80,26 +90,32 @@ export const seedStarterDocuments = <T extends Identified>(storage: StorageAcces
     const current = (stored ?? []) as T[]
     const seen = readLedger(storage, key)
     const version = readVersion(storage, key)
+    const claimed = claimedStarterIds(
+      key,
+      current.map(({ id }) => id),
+      seen,
+      version,
+    )
     const nextById = new Map(starter.map((unit) => [unit.id, unit]))
     const updated = current.map((unit) => {
       const next = nextById.get(unit.id)
       return version !== undefined &&
         version < contentVersion &&
-        seen.includes(unit.id) &&
+        claimed.has(unit.id) &&
         next &&
         current.filter(({ id }) => id === unit.id).length === 1 &&
         isUneditedStarter(key, unit.id, unit)
         ? next
         : unit
     })
-    const excluded = new Set([...seen, ...current.map(({ id }) => id)])
+    const excluded = new Set([...claimed, ...current.map(({ id }) => id)])
     const merged = [...updated, ...starter.filter(({ id }) => !excluded.has(id))]
     persist(
       storage,
       key,
       merged,
       seen,
-      starter.map(({ id }) => id),
+      [...claimed, ...starter.map(({ id }) => id)],
       version,
     )
     return merged
@@ -129,6 +145,12 @@ export const seedStarterVocabulary = <S extends Identified, I extends Identified
       return undefined
     const seen = readLedger(storage, key)
     const version = readVersion(storage, key)
+    const claimed = claimedStarterIds(
+      key,
+      [...current.sets.map(({ id }) => id), ...current.items.map(({ setId }) => setId)],
+      seen,
+      version,
+    )
     const nextById = new Map(starter.sets.map((set) => [set.id, set]))
     const upgraded = new Set<string>()
     const sets = current.sets.map((set) => {
@@ -136,7 +158,7 @@ export const seedStarterVocabulary = <S extends Identified, I extends Identified
       if (
         version === undefined ||
         version >= contentVersion ||
-        !seen.includes(set.id) ||
+        !claimed.has(set.id) ||
         !next ||
         current.sets.filter(({ id }) => id === set.id).length !== 1
       )
@@ -148,7 +170,7 @@ export const seedStarterVocabulary = <S extends Identified, I extends Identified
       upgraded.add(set.id)
       return next
     })
-    const excluded = new Set([...seen, ...current.sets.map(({ id }) => id), ...current.items.map(({ setId }) => setId)])
+    const excluded = new Set([...claimed, ...current.sets.map(({ id }) => id), ...current.items.map(({ setId }) => setId)])
     const occupied = new Set(current.items.map(({ id }) => id))
     const additions = starter.sets.filter(
       ({ id }) => !excluded.has(id) && !starter.items.some((item) => item.setId === id && occupied.has(item.id)),
@@ -172,7 +194,7 @@ export const seedStarterVocabulary = <S extends Identified, I extends Identified
       key,
       merged,
       seen,
-      starter.sets.map(({ id }) => id),
+      [...claimed, ...starter.sets.map(({ id }) => id)],
       version,
     )
     return merged
