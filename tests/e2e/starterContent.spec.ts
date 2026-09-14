@@ -48,14 +48,14 @@ test('300 單元及所有 item ID 全域唯一，標題與整份內容不重複'
         ),
       ),
     )
-    expect(library.items).toHaveLength(750)
+    expect(library.items).toHaveLength(3750)
     expect(library.items.every(({ setId }) => library.sets.some(({ id }) => id === setId))).toBe(true)
   }
 })
 
 test('Starter 日文不把句尾終止標點納入 target，句中與英文標點仍保留', () => {
   const japaneseSentences = starterJapaneseArticles.flatMap(({ sentences }) => sentences)
-  expect(japaneseSentences).toHaveLength(450)
+  expect(japaneseSentences.length).toBeGreaterThanOrEqual(750)
   for (const sentence of japaneseSentences) {
     expect(sentence.name).not.toMatch(/[。？！]$/u)
     expect(sentence.notation).not.toMatch(/[。？！]$/u)
@@ -66,7 +66,7 @@ test('Starter 日文不把句尾終止標點納入 target，句中與英文標�
   expect(getPracticeTypingTarget(japaneseSentenceWithComma!)).toContain(',')
 
   const englishSentences = starterEnglishDialogues.flatMap(({ sentences }) => sentences)
-  expect(englishSentences).toHaveLength(450)
+  expect(englishSentences.length).toBeGreaterThanOrEqual(750)
   expect(englishSentences.every(({ text }) => /[.?!]$/.test(text))).toBe(true)
   expect(englishSentences.some(({ text }) => text.includes(','))).toBe(true)
   expect(englishSentences.some(({ text }) => text.includes("'"))).toBe(true)
@@ -78,12 +78,12 @@ test('Starter 日文不把句尾終止標點納入 target，句中與英文標�
 })
 
 for (const level of jlpt) {
-  test(`${level} 正好 15 個日文單字題庫，各 10 詞，符合正式匯入與 reading invariant`, () => {
+  test(`${level} 正好 15 個日文單字題庫，各 50 詞，符合正式匯入與 reading invariant`, () => {
     const sets = starterJapaneseVocabulary.sets.filter(({ jlptLevel }) => jlptLevel === level)
     expect(sets).toHaveLength(15)
     for (const set of sets) {
       const items = starterJapaneseVocabulary.items.filter(({ setId }) => setId === set.id)
-      expect(items, set.title).toHaveLength(10)
+      expect(items, set.title).toHaveLength(50)
       unique(items.map(({ word, reading }) => `${word}|${reading}`))
       const result = importVocabularySets([{ text: JSON.stringify({ ...set, items }) }], empty)
       expect(result, set.title).not.toHaveProperty('error')
@@ -103,7 +103,8 @@ for (const level of jlpt) {
     expect(documents).toHaveLength(15)
     expect(importChatGPTPracticeDocuments([JSON.stringify(documents)]).error).toBeUndefined()
     for (const document of documents) {
-      expect(document.sentences, document.title).toHaveLength(6)
+      expect(document.sentences.length, document.title).toBeGreaterThanOrEqual(10)
+      expect(document.sentences.length, document.title).toBeLessThanOrEqual(20)
       expect(validateGeneratedPracticeDocument(document), document.title).toEqual({ valid: true, errors: [] })
       for (const sentence of document.sentences) {
         expect(sentence.name).not.toMatch(speakerLabel)
@@ -116,18 +117,18 @@ for (const level of jlpt) {
       const session = createArticleTypingSession(document)
       expect(session.typingLength).toBeGreaterThan(0)
       expect(session.typingLength).toBeLessThanOrEqual(MAX_ARTICLE_TYPING_LENGTH)
-      expect(session.sentencePresentations).toHaveLength(6)
+      expect(session.sentencePresentations).toHaveLength(document.sentences.length)
     }
   })
 }
 
 for (const level of cefr) {
-  test(`${level} 正好 15 個英文單字題庫，各 10 詞，符合正式匯入`, () => {
+  test(`${level} 正好 15 個英文單字題庫，各 50 詞，符合正式匯入`, () => {
     const sets = starterEnglishVocabulary.sets.filter((set) => set.level === level)
     expect(sets).toHaveLength(15)
     for (const set of sets) {
       const items = starterEnglishVocabulary.items.filter(({ setId }) => setId === set.id)
-      expect(items, set.title).toHaveLength(10)
+      expect(items, set.title).toHaveLength(50)
       unique(items.map(({ word }) => word))
       expect(importEnglishVocabularySets([{ text: JSON.stringify({ ...set, items }) }], empty), set.title).not.toHaveProperty('error')
       for (const item of items) {
@@ -144,7 +145,8 @@ for (const level of cefr) {
     expect(documents).toHaveLength(15)
     expect(importEnglishDialogueDocuments([{ text: JSON.stringify(documents) }])).not.toHaveProperty('error')
     for (const document of documents) {
-      expect(document.sentences, document.title).toHaveLength(6)
+      expect(document.sentences.length, document.title).toBeGreaterThanOrEqual(10)
+      expect(document.sentences.length, document.title).toBeLessThanOrEqual(20)
       const session = createEnglishDialogueTypingSession(document)
       expect(session.typingItems.map(({ name }) => name)).toEqual(document.sentences.map(({ text }) => text))
       for (const sentence of document.sentences) {
@@ -200,4 +202,69 @@ test('初階沒有明顯高階論述詞句，整體句長隨級別增加', () =>
   expect(japaneseLengths[0]).toBeLessThan(25)
   expect(englishLengths[0]).toBeLessThan(10)
   console.log('各級平均日文字數／英文字數', { jlpt: japaneseLengths, cefr: englishLengths })
+})
+
+test('擴充教材總量與單元內正規化重複檢查', () => {
+  expect(starterJapaneseVocabulary.items.length + starterEnglishVocabulary.items.length).toBe(7500)
+  const normalize = (text: string) => text.normalize('NFKC').toLocaleLowerCase('en-US').trim().replace(/\s+/g, ' ')
+  for (const library of [starterJapaneseVocabulary, starterEnglishVocabulary]) {
+    for (const set of library.sets) {
+      const words = library.items.filter(({ setId }) => setId === set.id).map(({ word }) => normalize(word))
+      expect(new Set(words).size, set.title).toBe(words.length)
+    }
+  }
+  for (const document of starterJapaneseArticles) {
+    const texts = document.sentences.map(({ name }) => normalize(name))
+    expect(new Set(texts).size, document.title).toBe(texts.length)
+  }
+  for (const document of starterEnglishDialogues) {
+    const texts = document.sentences.map(({ text }) => normalize(text))
+    expect(new Set(texts).size, document.title).toBe(texts.length)
+  }
+  for (const [levels, library] of [
+    [jlpt, starterJapaneseVocabulary],
+    [cefr, starterEnglishVocabulary],
+  ] as const) {
+    for (const level of levels) {
+      const ids = new Set(library.sets.filter((set) => ('jlptLevel' in set ? set.jlptLevel : set.level) === level).map(({ id }) => id))
+      const words = library.items.filter(({ setId }) => ids.has(setId)).map(({ word }) => normalize(word))
+      expect(words).toHaveLength(750)
+      const repeated = words.length - new Set(words).size
+      // 跨主題核心詞可少量重複；超過 8% 時必須回到內容逐項檢視。
+      expect(repeated / words.length, `${level} 跨單元重複 ${repeated}/${words.length}`).toBeLessThanOrEqual(0.08)
+      console.log('單字重複 audit', level, { total: words.length, unique: new Set(words).size, repeated })
+    }
+  }
+  for (const documents of [starterJapaneseArticles, starterEnglishDialogues]) {
+    const counts = documents.map(({ sentences }) => sentences.length)
+    expect(counts.filter((count) => count >= 12 && count <= 16).length).toBeGreaterThan(documents.length / 2)
+    expect(new Set(counts).size).toBeGreaterThan(1)
+    console.log('情境句數 audit', { min: Math.min(...counts), max: Math.max(...counts), total: counts.reduce((a, b) => a + b, 0) })
+  }
+})
+
+test('內容審稿回歸：初階不混入正式高階詞，也不以同詞異寫或屈折變化充數', () => {
+  // 這些是本輪逐題審稿發現的案例；僅防止退化，不能取代完整的難度審稿。
+  const beginnerJapanese = starterJapaneseVocabulary.items.filter(({ jlptLevel }) => jlptLevel === 'N5' || jlptLevel === 'N4')
+  expect(beginnerJapanese.filter(({ word }) => word === '購入')).toEqual([])
+  for (const level of jlpt) {
+    const words = new Set(starterJapaneseVocabulary.items.filter(({ jlptLevel }) => jlptLevel === level).map(({ word }) => word))
+    for (const aliases of [
+      ['無くす', 'なくす'],
+      ['大切', 'たいせつ'],
+      ['多分', 'たぶん'],
+    ]) {
+      expect(aliases.filter((word) => words.has(word)).length, `${level}: ${aliases.join(' / ')}`).toBeLessThanOrEqual(1)
+    }
+  }
+  for (const set of starterEnglishVocabulary.sets) {
+    const words = new Set(starterEnglishVocabulary.items.filter(({ setId }) => setId === set.id).map(({ word }) => word.toLowerCase()))
+    for (const forms of [
+      ['swim', 'swimming'],
+      ['person', 'people'],
+      ['check in', 'check-in'],
+    ]) {
+      expect(forms.filter((word) => words.has(word)).length, `${set.title}: ${forms.join(' / ')}`).toBeLessThanOrEqual(1)
+    }
+  }
 })

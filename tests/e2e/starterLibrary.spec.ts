@@ -80,7 +80,7 @@ test('既有四類題庫、completion、progress 與自訂設定皆保留，重�
       expect(merged[0]).toEqual(original[0])
     } else {
       expect(merged.sets).toHaveLength(76)
-      expect(merged.items).toHaveLength(751)
+      expect(merged.items).toHaveLength(3751)
       expect(merged.sets[0]).toEqual(original.sets[0])
       expect(merged.items[0]).toEqual(original.items[0])
     }
@@ -103,7 +103,7 @@ test('保留舊版日文 vocabularyItems 的 ID 與內容', async ({ page }) => 
   expect(result.sets).toHaveLength(76)
   expect(result.items[0]).toMatchObject(legacy[0])
   await page.reload()
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('vocabularyLibrary')!).items.length)).toBe(751)
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('vocabularyLibrary')!).items.length)).toBe(3751)
 })
 
 for (const [route, level, key] of [
@@ -118,7 +118,16 @@ for (const [route, level, key] of [
     await page.getByRole('button', { name: '開始練習', exact: true }).first().click()
     await expect(page.getByTestId('practice-header-title')).toBeVisible()
     await page.getByRole('button', { name: '繼續', exact: true }).click()
-    await page.keyboard.press('a')
+    const currentLetter = page.getByTestId('practice-romaji-typing-row').locator('[data-current-letter="true"]')
+    const firstLetter = await currentLetter.textContent()
+    expect(firstLetter).toMatch(/^[A-Za-z]$/)
+    await page.keyboard.press(firstLetter!)
+    await expect(currentLetter).toHaveAttribute('data-global-letter-index', '1')
+    await page.getByRole('button', { name: '暫停', exact: true }).click()
+    await page.keyboard.press('x')
+    await expect(currentLetter).toHaveAttribute('data-global-letter-index', '1')
+    await page.getByRole('button', { name: '繼續', exact: true }).click()
+    await expect(currentLetter).toHaveAttribute('data-global-letter-index', '1')
     await page.getByRole('button', { name: '暫停', exact: true }).click()
     await page.getByRole('button', { name: '繼續', exact: true }).hover()
     await page.getByRole('button', { name: '重新', exact: true }).click()
