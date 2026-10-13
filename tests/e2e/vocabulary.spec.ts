@@ -449,7 +449,11 @@ test.describe('Vocabulary Library UI', () => {
         name: 'ignored.json',
         mimeType: 'application/json',
         buffer: Buffer.from(
-          JSON.stringify({ title: 'N5｜飯店入住單字', jlptLevel: 'N5', items: [{ word: '部屋', reading: 'へや', meaning: '房間' }] }),
+          JSON.stringify({
+            title: 'N5｜飯店入住單字',
+            jlptLevel: 'N5',
+            items: [{ word: '旅籠帳', reading: 'はたごちょう', meaning: '旅館住宿名冊' }],
+          }),
         ),
       },
     ])

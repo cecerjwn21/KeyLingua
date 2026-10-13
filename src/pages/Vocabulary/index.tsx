@@ -13,13 +13,22 @@ import LibraryLevelCard from '@/components/LibraryLevelCard'
 import LibraryPageHeader from '@/components/LibraryPageHeader'
 import ProductIcon from '@/components/ProductIcon'
 import useLibraryLevelRoute from '@/components/useLibraryLevelRoute'
+import {
+  type VocabularyDuplicateReview as DuplicateReview,
+  applyVocabularyDuplicateDecision,
+  createVocabularyContentRegistry,
+  reviewVocabularyImport,
+} from '@/contentRegistry/vocabularyRegistry'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import JsonFilePicker from '@/pages/LibraryImport/JsonFilePicker'
 import PromptDisclosure from '@/pages/LibraryImport/PromptDisclosure'
 import ValidationResult from '@/pages/LibraryImport/ValidationResult'
+import VocabularyDuplicateReview from '@/pages/LibraryImport/VocabularyDuplicateReview'
 import { starterJapaneseVocabulary } from '@/resources/starter/japaneseVocabulary'
 import {
   currentVocabularySetIdAtom,
   englishPracticeDocumentIdAtom,
+  englishVocabularyLibraryAtom,
   englishVocabularySetIdAtom,
   getLibraryCompletionKey,
   libraryCompletionAtom,
@@ -61,39 +70,44 @@ const VocabularySetCard = ({
   onStart: () => void
   onEdit: () => void
   onDelete: () => void
-}) => (
-  <LibraryCompletionCard
-    data-testid="vocabulary-set-card"
-    completed={completed}
-    showCompletionStatus={!manage}
-    actions={
-      manage ? (
-        <>
-          <button type="button" className="app-button app-button-destructive" onClick={onDelete}>
-            <ProductIcon icon={Trash2} size={16} />
-            刪除
+}) => {
+  const { t } = useUiTranslation()
+  return (
+    <LibraryCompletionCard
+      data-testid="vocabulary-set-card"
+      completed={completed}
+      showCompletionStatus={!manage}
+      actions={
+        manage ? (
+          <>
+            <button type="button" className="app-button app-button-destructive" onClick={onDelete}>
+              <ProductIcon icon={Trash2} size={16} />
+              {t('library.delete')}
+            </button>
+            <button type="button" className="app-button app-button-secondary" onClick={onEdit}>
+              <ProductIcon icon={Pencil} size={16} />
+              {t('library.edit')}
+            </button>
+          </>
+        ) : (
+          <button type="button" className="app-button app-button-primary" disabled={count === 0} onClick={onStart}>
+            <ProductIcon icon={Play} size={16} />
+            {t('library.startPractice')}
           </button>
-          <button type="button" className="app-button app-button-secondary" onClick={onEdit}>
-            <ProductIcon icon={Pencil} size={16} />
-            編輯
-          </button>
-        </>
-      ) : (
-        <button type="button" className="app-button app-button-primary" disabled={count === 0} onClick={onStart}>
-          <ProductIcon icon={Play} size={16} />
-          開始練習
-        </button>
-      )
-    }
-  >
-    <h3 className="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{set.title}</h3>
-    <p className="mt-3 text-gray-600 dark:text-gray-300">{count} 個單字</p>
-    <p className="mt-1 break-words text-sm text-gray-500 dark:text-gray-400">來源：{source}</p>
-  </LibraryCompletionCard>
-)
+        )
+      }
+    >
+      <h3 className="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{set.title}</h3>
+      <p className="mt-3 text-gray-600 dark:text-gray-300">{t('library.wordCount', { count })}</p>
+      <p className="mt-1 break-words text-sm text-gray-500 dark:text-gray-400">來源：{source}</p>
+    </LibraryCompletionCard>
+  )
+}
 
 export default function VocabularyPage({ manage = false }: { manage?: boolean }) {
+  const { t } = useUiTranslation()
   const [library, setLibrary] = useAtom(vocabularyLibraryAtom)
+  const englishLibrary = useAtomValue(englishVocabularyLibraryAtom)
   const libraryCompletion = useAtomValue(libraryCompletionAtom)
   const setCurrentVocabularySetId = useSetAtom(currentVocabularySetIdAtom)
   const setPracticeDocumentId = useSetAtom(practiceDocumentIdAtom)
@@ -125,6 +139,8 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
   const [importTitle, setImportTitle] = useState('')
   const [importPreview, setImportPreview] = useState<Exclude<ReturnType<typeof importVocabularySets>, { error: string }> | null>(null)
   const [importError, setImportError] = useState('')
+  const [duplicateReview, setDuplicateReview] = useState<DuplicateReview | null>(null)
+  const [allowedNearIds, setAllowedNearIds] = useState<Set<string>>(new Set())
 
   const managingSet = library.sets.find((set) => set.id === managingSetId)
   const levelSets = selectedLevel ? library.sets.filter((set) => set.jlptLevel === selectedLevel) : []
@@ -210,10 +226,32 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
     const result = importVocabularySets(sources, library, pastedTitle)
     if ('error' in result) {
       setImportPreview(null)
+      setDuplicateReview(null)
       setImportError(result.error)
       return
     }
+    const registry = createVocabularyContentRegistry(library, englishLibrary)
+    const unitsById = new Map(result.sets.map((unit) => [unit.id, unit]))
+    const candidates = result.items.flatMap((item) => {
+      const unit = unitsById.get(item.setId)
+      return unit
+        ? [
+            {
+              language: 'japanese' as const,
+              itemId: item.id,
+              unitId: unit.id,
+              unitTitle: unit.title,
+              level: unit.jlptLevel,
+              word: item.word,
+              reading: item.reading,
+              meaning: item.meaning,
+            },
+          ]
+        : []
+    })
     setImportPreview(result)
+    setDuplicateReview(reviewVocabularyImport(registry, candidates))
+    setAllowedNearIds(new Set())
     setImportError('')
   }
 
@@ -222,18 +260,24 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
     setImportSources(sources)
     setImportText(sources.map(({ text }) => text).join('\n\n'))
     setImportPreview(null)
+    setDuplicateReview(null)
     setImportError('')
   }
 
   const saveImport = () => {
-    if (!importPreview) return
+    if (!importPreview || !duplicateReview) return
+    const acceptedIds = new Set(applyVocabularyDuplicateDecision(duplicateReview, allowedNearIds).map(({ itemId }) => itemId))
+    const acceptedItems = importPreview.items.filter(({ id }) => acceptedIds.has(id))
+    const acceptedSetIds = new Set(acceptedItems.map(({ setId }) => setId))
+    const acceptedSets = importPreview.sets.filter(({ id }) => acceptedSetIds.has(id))
     setLibrary((current) => ({
       ...current,
-      sets: [...current.sets, ...importPreview.sets],
-      items: [...current.items, ...importPreview.items],
+      sets: [...current.sets, ...acceptedSets],
+      items: [...current.items, ...acceptedItems],
     }))
-    setNotice(`已匯入 ${importPreview.sets.length} 個題庫・${importPreview.items.length} 個單字`)
+    setNotice(`已匯入 ${acceptedSets.length} 個題庫・${acceptedItems.length} 個單字`)
     setImportPreview(null)
+    setDuplicateReview(null)
     setImportText('')
     setImportSources([])
     setImportTitle('')
@@ -263,13 +307,13 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
         <LibraryPageHeader
           language="japanese"
           current="vocabulary"
-          title={manage ? '管理日文單字題庫' : '單字庫'}
-          description={manage ? '以題庫為單位編輯或刪除日文單字。' : '依 JLPT 與主題整理日文單字，每次只練目前選擇的題庫。'}
+          title={t(manage ? 'library.japaneseVocabulary.manageTitle' : 'library.japaneseVocabulary.title')}
+          description={t(manage ? 'library.japaneseVocabulary.manageDescription' : 'library.japaneseVocabulary.description')}
           actions={
             <>
               <button type="button" className="app-button app-button-secondary" onClick={() => openSetEditor()}>
                 <ProductIcon icon={Plus} size={17} />
-                新增題庫
+                {t('library.addVocabulary')}
               </button>
               <button
                 type="button"
@@ -282,19 +326,22 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                 }}
               >
                 <ProductIcon icon={FileUp} size={17} />
-                匯入題庫
+                {t('library.importVocabulary')}
               </button>
               {manage ? (
-                <LibraryBackButton label="返回單字庫" to={selectedLevel ? `/ja/vocabulary?level=${selectedLevel}` : '/ja/vocabulary'} />
+                <LibraryBackButton
+                  label={t('library.backVocabulary')}
+                  to={selectedLevel ? `/ja/vocabulary?level=${selectedLevel}` : '/ja/vocabulary'}
+                />
               ) : selectedLevel ? (
                 <Link className="app-button app-button-secondary" to={`/ja/vocabulary/manage?level=${selectedLevel}`}>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </Link>
               ) : (
                 <button type="button" className="app-button app-button-secondary" disabled>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </button>
               )}
             </>
@@ -391,7 +438,7 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
         ) : manage ? (
           <section className="mt-10" aria-label="日文單字題庫管理清單">
             {levelSets.length === 0 ? (
-              <LibraryEmptyState>目前沒有日文單字題庫。建立或匯入後即可集中管理。</LibraryEmptyState>
+              <LibraryEmptyState>{t('library.empty.japaneseVocabularyManage')}</LibraryEmptyState>
             ) : (
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {levelSets.map((set) => {
@@ -419,10 +466,12 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
           </section>
         ) : selectedLevel ? (
           <section className="mt-10">
-            <LibraryBackButton label="返回單字庫" onClick={clearSelectedLevel} />
-            <h2 className="mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">{selectedLevel} 單字題庫</h2>
+            <LibraryBackButton label={t('library.backVocabulary')} onClick={clearSelectedLevel} />
+            <h2 className="mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              {t('library.levelVocabularyTitle', { level: selectedLevel })}
+            </h2>
             {levelSets.length === 0 ? (
-              <LibraryEmptyState className="mt-5">目前沒有 {selectedLevel} 題庫。建立或匯入後會顯示在這裡。</LibraryEmptyState>
+              <LibraryEmptyState className="mt-5">{t('library.empty.japaneseVocabularyLevel', { level: selectedLevel })}</LibraryEmptyState>
             ) : (
               <>
                 <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -454,14 +503,14 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                     ).length
                   }
                   total={levelSets.length}
-                  noun="組"
+                  noun={t('library.noun.set')}
                 />
               </>
             )}
           </section>
         ) : (
           <section className="mt-10">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">選擇 JLPT 等級</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{t('library.selectJlpt')}</h2>
             <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
               {JLPT_LEVELS.map((level) => (
                 <LibraryLevelCard
@@ -606,12 +655,12 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 overflow-y-auto p-4 sm:flex sm:items-center sm:justify-center">
           <Dialog.Panel className="mx-auto flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-            <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-gray-100">匯入題庫</Dialog.Title>
+            <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-gray-100">{t('import.vocabulary.title')}</Dialog.Title>
             {importPreview ? (
               <ValidationResult
                 successMessage={
                   importPreview.sets.length === 1
-                    ? '單字題庫驗證成功'
+                    ? t('import.validation.vocabulary')
                     : `已驗證 ${importPreview.sets.length} 個題庫・${importPreview.items.length} 個單字`
                 }
                 summary={
@@ -620,10 +669,17 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                     <p>程度：{importPreview.sets[0].jlptLevel}</p>
                     <p>單字數：{importPreview.items.length}</p>
                     {importPreview.duplicates.length > 0 && <p>題庫內重複單字會略過。</p>}
+                    {duplicateReview && (
+                      <VocabularyDuplicateReview
+                        review={duplicateReview}
+                        allowedNearIds={allowedNearIds}
+                        onAllowedNearIdsChange={setAllowedNearIds}
+                      />
+                    )}
                   </>
                 }
                 checks={['word', 'reading', 'meaning', 'source', '題庫 schema']}
-                confirmLabel="確認匯入題庫"
+                confirmLabel={t('import.vocabulary.confirm')}
                 onBack={() => setImportPreview(null)}
                 onConfirm={saveImport}
               />
@@ -644,7 +700,7 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                   />
                 </label>
                 <label className="flex min-h-0 flex-1 flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                  單字 JSON
+                  {t('import.vocabulary.japaneseJsonLabel')}
                   <textarea
                     aria-label="單字 JSON"
                     value={importText}
@@ -670,7 +726,7 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                 <div className="flex flex-wrap justify-end gap-3">
                   <button type="button" className="app-button app-button-secondary" onClick={() => setIsImportOpen(false)}>
                     <ProductIcon icon={X} size={16} />
-                    取消
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="button"
@@ -680,7 +736,7 @@ export default function VocabularyPage({ manage = false }: { manage?: boolean })
                     }
                   >
                     <ProductIcon icon={Check} size={16} />
-                    驗證題庫
+                    {t('import.vocabulary.validate')}
                   </button>
                 </div>
               </div>

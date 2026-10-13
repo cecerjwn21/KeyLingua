@@ -10,7 +10,15 @@ import LibraryEmptyState from '@/components/LibraryEmptyState'
 import LibraryLevelCard from '@/components/LibraryLevelCard'
 import ProductIcon from '@/components/ProductIcon'
 import useLibraryLevelRoute from '@/components/useLibraryLevelRoute'
+import {
+  type VocabularyDuplicateReview as DuplicateReview,
+  applyVocabularyDuplicateDecision,
+  createVocabularyContentRegistry,
+  reviewVocabularyImport,
+} from '@/contentRegistry/vocabularyRegistry'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import ValidationResult from '@/pages/LibraryImport/ValidationResult'
+import VocabularyDuplicateReview from '@/pages/LibraryImport/VocabularyDuplicateReview'
 import {
   currentVocabularySetIdAtom,
   englishPracticeDocumentIdAtom,
@@ -20,9 +28,10 @@ import {
   libraryCompletionAtom,
   practiceDocumentIdAtom,
   practiceSourceAtom,
+  vocabularyLibraryAtom,
 } from '@/store'
 import { CEFR_LEVELS } from '@/typings'
-import type { CEFRLevel, EnglishVocabularySet } from '@/typings'
+import type { EnglishVocabularySet } from '@/typings'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Pencil, Play, Settings2, Trash2, Upload } from 'lucide'
 import { useState } from 'react'
@@ -32,7 +41,9 @@ type EditorMode = 'import' | 'edit'
 type EnglishVocabularyImportPreview = Exclude<ReturnType<typeof importEnglishVocabularySets>, { error: string }>
 
 export default function EnglishVocabularyLibraryPage({ manage = false }: { manage?: boolean }) {
+  const { t } = useUiTranslation()
   const [library, setLibrary] = useAtom(englishVocabularyLibraryAtom)
+  const japaneseLibrary = useAtomValue(vocabularyLibraryAtom)
   const libraryCompletion = useAtomValue(libraryCompletionAtom)
   const setEnglishPracticeDocumentId = useSetAtom(englishPracticeDocumentIdAtom)
   const setEnglishVocabularySetId = useSetAtom(englishVocabularySetIdAtom)
@@ -47,6 +58,8 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
   const [editorFileInputs, setEditorFileInputs] = useState<EnglishImportInput[]>([])
   const [editorError, setEditorError] = useState('')
   const [editorPreview, setEditorPreview] = useState<EnglishVocabularyImportPreview | null>(null)
+  const [duplicateReview, setDuplicateReview] = useState<DuplicateReview | null>(null)
+  const [allowedNearIds, setAllowedNearIds] = useState<Set<string>>(new Set())
   const [deletingSet, setDeletingSet] = useState<EnglishVocabularySet | null>(null)
   const [notice, setNotice] = useState('')
 
@@ -70,6 +83,8 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
     setEditorFileInputs([])
     setEditorError('')
     setEditorPreview(null)
+    setDuplicateReview(null)
+    setAllowedNearIds(new Set())
   }
 
   const closeEditor = () => {
@@ -78,6 +93,7 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
     setEditorFileInputs([])
     setEditorError('')
     setEditorPreview(null)
+    setDuplicateReview(null)
   }
 
   const validateImport = () => {
@@ -90,19 +106,43 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
       setEditorError(result.error)
       return
     }
+    const registry = createVocabularyContentRegistry(japaneseLibrary, library)
+    const unitsById = new Map(result.sets.map((unit) => [unit.id, unit]))
+    const candidates = result.items.flatMap((item) => {
+      const unit = unitsById.get(item.setId)
+      return unit
+        ? [
+            {
+              language: 'english' as const,
+              itemId: item.id,
+              unitId: unit.id,
+              unitTitle: unit.title,
+              level: unit.level,
+              word: item.word,
+              meaning: item.meaning,
+            },
+          ]
+        : []
+    })
     setEditorPreview(result)
+    setDuplicateReview(reviewVocabularyImport(registry, candidates))
+    setAllowedNearIds(new Set())
     setEditorError('')
   }
 
   const saveEditor = () => {
     if (!editingSet) {
-      if (!editorPreview) return
+      if (!editorPreview || !duplicateReview) return
+      const acceptedIds = new Set(applyVocabularyDuplicateDecision(duplicateReview, allowedNearIds).map(({ itemId }) => itemId))
+      const acceptedItems = editorPreview.items.filter(({ id }) => acceptedIds.has(id))
+      const acceptedSetIds = new Set(acceptedItems.map(({ setId }) => setId))
+      const acceptedSets = editorPreview.sets.filter(({ id }) => acceptedSetIds.has(id))
       setLibrary((current) => ({
         version: 1,
-        sets: [...current.sets, ...editorPreview.sets],
-        items: [...current.items, ...editorPreview.items],
+        sets: [...current.sets, ...acceptedSets],
+        items: [...current.items, ...acceptedItems],
       }))
-      setNotice(`已匯入 ${editorPreview.sets.length} 個英文單字題庫`)
+      setNotice(`已匯入 ${acceptedSets.length} 個英文單字題庫`)
       closeEditor()
       return
     }
@@ -156,25 +196,28 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
       <div className="mx-auto max-w-6xl">
         <EnglishLibraryHeader
           current="vocabulary"
-          title={manage ? '管理英文單字題庫' : '單字庫'}
-          description={manage ? '以題庫為單位編輯或刪除英文單字。' : '依 CEFR 與主題選擇有名稱的單字題庫，每次只練目前題庫。'}
+          title={t(manage ? 'library.englishVocabulary.manageTitle' : 'library.englishVocabulary.title')}
+          description={t(manage ? 'library.englishVocabulary.manageDescription' : 'library.englishVocabulary.description')}
           actions={
             <>
               <button type="button" className="app-button app-button-primary" onClick={() => openEditor('import')}>
                 <ProductIcon icon={Upload} size={17} />
-                匯入
+                {t('library.import')}
               </button>
               {manage ? (
-                <LibraryBackButton label="返回單字庫" to={selectedLevel ? `/en/vocabulary?level=${selectedLevel}` : '/en/vocabulary'} />
+                <LibraryBackButton
+                  label={t('library.backVocabulary')}
+                  to={selectedLevel ? `/en/vocabulary?level=${selectedLevel}` : '/en/vocabulary'}
+                />
               ) : selectedLevel ? (
                 <Link className="app-button app-button-secondary" to={`/en/vocabulary/manage?level=${selectedLevel}`}>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </Link>
               ) : (
                 <button type="button" className="app-button app-button-secondary" disabled>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </button>
               )}
             </>
@@ -189,7 +232,7 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
         {manage ? (
           <section className="mt-10" aria-label="英文單字題庫管理清單">
             {visibleSets.length === 0 ? (
-              <LibraryEmptyState>目前沒有英文單字題庫。匯入 JSON 後即可集中管理。</LibraryEmptyState>
+              <LibraryEmptyState>{t('library.empty.englishVocabularyManage')}</LibraryEmptyState>
             ) : (
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {visibleSets.map((set) => (
@@ -211,12 +254,12 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
           </section>
         ) : selectedLevel ? (
           <section className="mt-10" aria-labelledby="english-vocabulary-list-title">
-            <LibraryBackButton label="返回 CEFR 等級" onClick={clearSelectedLevel} />
+            <LibraryBackButton label={t('library.backCefrLevels')} onClick={clearSelectedLevel} />
             <h2 id="english-vocabulary-list-title" className="mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {selectedLevel} 單字題庫
+              {t('library.levelVocabularyTitle', { level: selectedLevel })}
             </h2>
             {visibleSets.length === 0 ? (
-              <LibraryEmptyState className="mt-5">目前沒有 {selectedLevel} 英文單字題庫。匯入後會自動依 CEFR 等級歸類。</LibraryEmptyState>
+              <LibraryEmptyState className="mt-5">{t('library.empty.englishVocabularyLevel', { level: selectedLevel })}</LibraryEmptyState>
             ) : (
               <>
                 <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -242,7 +285,7 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
                     ).length
                   }
                   total={visibleSets.length}
-                  noun="組"
+                  noun={t('library.noun.set')}
                 />
               </>
             )}
@@ -250,7 +293,7 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
         ) : (
           <section className="mt-10" aria-labelledby="cefr-vocabulary-levels-title">
             <h2 id="cefr-vocabulary-levels-title" className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              選擇 CEFR 等級
+              {t('library.selectCefr')}
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {CEFR_LEVELS.map((level) => {
@@ -260,8 +303,8 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
                   <LibraryLevelCard
                     key={level}
                     level={level}
-                    summary={`${sets.length} 個題庫`}
-                    detail={`${itemCount} 個單字`}
+                    summary={t('library.setCount', { count: sets.length })}
+                    detail={t('library.wordCount', { count: itemCount })}
                     onClick={() => setSelectedLevel(level)}
                   />
                 )
@@ -273,25 +316,34 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
 
       <EnglishJsonDialog
         open={editorMode !== null}
-        title={editorMode === 'edit' ? '編輯英文單字題庫' : '匯入英文單字題庫'}
-        label="單字題庫 JSON"
+        title={t(editorMode === 'edit' ? 'import.vocabulary.editEnglishTitle' : 'import.vocabulary.englishTitle')}
+        label={t('import.vocabulary.jsonLabel')}
         value={editorText}
         error={editorError}
-        confirmLabel={editorMode === 'edit' ? '儲存變更' : '驗證題庫'}
+        confirmLabel={t(editorMode === 'edit' ? 'common.saveChanges' : 'import.vocabulary.validate')}
         promptKind={editorMode === 'import' ? 'english-vocabulary' : undefined}
         validation={
           editorPreview && (
             <ValidationResult
-              successMessage={editorPreview.sets.length === 1 ? '單字題庫驗證成功' : `已驗證 ${editorPreview.sets.length} 個英文單字題庫`}
+              successMessage={
+                editorPreview.sets.length === 1 ? t('import.validation.vocabulary') : `已驗證 ${editorPreview.sets.length} 個英文單字題庫`
+              }
               summary={
                 <>
                   <p>第一個題庫：{editorPreview.sets[0].title}</p>
                   <p>程度：{editorPreview.sets[0].level}</p>
                   <p>單字數：{editorPreview.items.length}</p>
+                  {duplicateReview && (
+                    <VocabularyDuplicateReview
+                      review={duplicateReview}
+                      allowedNearIds={allowedNearIds}
+                      onAllowedNearIdsChange={setAllowedNearIds}
+                    />
+                  )}
                 </>
               }
               checks={['title', 'items', 'level', 'word、meaning 與 source']}
-              confirmLabel="確認匯入題庫"
+              confirmLabel={t('import.vocabulary.confirm')}
               onBack={() => setEditorPreview(null)}
               onConfirm={saveEditor}
             />
@@ -318,7 +370,7 @@ export default function EnglishVocabularyLibraryPage({ manage = false }: { manag
       />
       <EnglishDeleteDialog
         open={Boolean(deletingSet)}
-        title="刪除英文單字題庫"
+        title={t('delete.englishVocabulary.title')}
         itemTitle={deletingSet?.title ?? ''}
         onClose={() => setDeletingSet(null)}
         onConfirm={deleteVocabularySet}
@@ -344,6 +396,7 @@ function VocabularyCard({
   onEdit: () => void
   onDelete: () => void
 }) {
+  const { t } = useUiTranslation()
   return (
     <LibraryCompletionCard
       data-testid={`english-vocabulary-card-${set.id}`}
@@ -353,17 +406,17 @@ function VocabularyCard({
         !manage ? (
           <button type="button" className="app-button app-button-primary" disabled={itemCount === 0} onClick={onStart}>
             <ProductIcon icon={Play} size={16} />
-            開始練習
+            {t('library.startPractice')}
           </button>
         ) : (
           <>
             <button type="button" className="app-button app-button-destructive" onClick={onDelete}>
               <ProductIcon icon={Trash2} size={16} />
-              刪除
+              {t('library.delete')}
             </button>
             <button type="button" className="app-button app-button-secondary" onClick={onEdit}>
               <ProductIcon icon={Pencil} size={16} />
-              編輯
+              {t('library.edit')}
             </button>
           </>
         )

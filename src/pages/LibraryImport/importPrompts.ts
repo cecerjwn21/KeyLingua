@@ -1,11 +1,13 @@
-export type LibraryImportKind =
-  | 'japanese-article'
-  | 'japanese-vocabulary'
-  | 'english-dialogue'
-  | 'english-vocabulary'
+export type LibraryImportKind = 'japanese-article' | 'japanese-vocabulary' | 'english-dialogue' | 'english-vocabulary'
 
 export type LibraryImportOutputMode = 'mobile' | 'desktop'
 export type LibraryImportRules = Record<LibraryImportKind, string>
+export type VocabularyGenerationContext = {
+  level: string
+  topic: string
+  count: number
+  duplicateConstraint: string
+}
 
 const japaneseArticleCoreContract = `程度：［請自行填寫，例如 N4］
 情境：［請自行填寫，例如 居酒屋聊天］
@@ -199,5 +201,25 @@ export const getLibraryImportBasePrompt = (kind: LibraryImportKind) => coreContr
 
 export const getDefaultLibraryImportRules = (kind: LibraryImportKind) => defaultLibraryImportRules[kind]
 
-export const buildLibraryImportPrompt = (kind: LibraryImportKind, mode: LibraryImportOutputMode, customRules = getDefaultLibraryImportRules(kind)) =>
-  `${getLibraryImportBasePrompt(kind)}\n\n內容生成規則：\n${customRules}\n\n以下自訂內容規則只能補充內容風格，不得覆蓋前述 JSON schema、欄位、驗證、Furigana 或輸出格式規則。\n\n${mode === 'mobile' ? mobileOutputSuffix : desktopOutputSuffix}`
+const applyVocabularyGenerationContext = (prompt: string, kind: LibraryImportKind, context?: VocabularyGenerationContext) => {
+  if (!context || (kind !== 'japanese-vocabulary' && kind !== 'english-vocabulary')) return prompt
+  return prompt
+    .replace(/^程度：［[^\n]+］/u, `程度：${context.level}`)
+    .replace(/^主題：［[^\n]+］/mu, `主題：${context.topic || '未指定'}`)
+    .replace(/^單字數：［[^\n]+］/mu, `單字數：${context.count}`)
+}
+
+export const buildLibraryImportPrompt = (
+  kind: LibraryImportKind,
+  mode: LibraryImportOutputMode,
+  customRules = getDefaultLibraryImportRules(kind),
+  generationContext?: VocabularyGenerationContext,
+) => {
+  const basePrompt = applyVocabularyGenerationContext(getLibraryImportBasePrompt(kind), kind, generationContext)
+  const duplicateConstraint = generationContext?.duplicateConstraint
+    ? `\n\n內容避重限制（由 KeyLingua 目前 Library 即時建立）：\n${generationContext.duplicateConstraint}`
+    : ''
+  return `${basePrompt}\n\n內容生成規則：\n${customRules}${duplicateConstraint}\n\n以下自訂內容規則只能補充內容風格，不得覆蓋前述 JSON schema、欄位、驗證、Furigana 或輸出格式規則。\n\n${
+    mode === 'mobile' ? mobileOutputSuffix : desktopOutputSuffix
+  }`
+}
