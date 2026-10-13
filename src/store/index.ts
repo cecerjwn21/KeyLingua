@@ -1,16 +1,17 @@
 import atomForConfig from './atomForConfig'
 import { reviewInfoAtom } from './reviewInfoAtom'
 import { DISMISS_START_CARD_DATE_KEY, defaultFontSizeConfig } from '@/constants'
-import { defaultLibraryImportRules, type LibraryImportRules } from '@/pages/LibraryImport/importPrompts'
+import type { UiLocale } from '@/i18n/catalog'
+import { type LibraryImportRules, defaultLibraryImportRules } from '@/pages/LibraryImport/importPrompts'
 import { migrateVocabularyLibrary } from '@/pages/Vocabulary/utils/vocabulary'
 import { idDictionaryMap } from '@/resources/dictionary'
 import { practiceDocumentMap } from '@/resources/practiceDocuments'
-import { starterJapaneseArticles } from '@/resources/starter/japaneseArticles'
-import { starterJapaneseVocabulary } from '@/resources/starter/japaneseVocabulary'
+import { correctSoundResources, keySoundResources, wrongSoundResources } from '@/resources/soundResource'
 import { starterEnglishDialogues } from '@/resources/starter/englishDialogues'
 import { starterEnglishVocabulary } from '@/resources/starter/englishVocabulary'
+import { starterJapaneseArticles } from '@/resources/starter/japaneseArticles'
+import { starterJapaneseVocabulary } from '@/resources/starter/japaneseVocabulary'
 import { seedStarterDocuments, seedStarterVocabulary } from '@/resources/starter/seed'
-import { correctSoundResources, keySoundResources, wrongSoundResources } from '@/resources/soundResource'
 import type {
   Dictionary,
   EnglishPracticeDocument,
@@ -22,11 +23,11 @@ import type {
   PhoneticType,
   PracticeDocument,
   PronunciationType,
-  WordDictationOpenBy,
-  WordDictationType,
   VocabularyItem,
   VocabularyLibrary,
   VocabularySet,
+  WordDictationOpenBy,
+  WordDictationType,
 } from '@/typings'
 import type { ReviewRecord } from '@/utils/db/record'
 import { atom } from 'jotai'
@@ -56,7 +57,8 @@ const readStoredJSON = (key: string) => {
 
 const initialVocabularyLibrary = migrateVocabularyLibrary(readStoredJSON('vocabularyLibrary'), readStoredJSON('vocabularyItems'))
 const seededVocabularyLibrary =
-  seedStarterVocabulary(window.localStorage, 'vocabularyLibrary', starterJapaneseVocabulary, initialVocabularyLibrary) ?? initialVocabularyLibrary
+  seedStarterVocabulary(window.localStorage, 'vocabularyLibrary', starterJapaneseVocabulary, initialVocabularyLibrary) ??
+  initialVocabularyLibrary
 
 export const vocabularyLibraryAtom = atomWithStorage<VocabularyLibrary>('vocabularyLibrary', seededVocabularyLibrary)
 export const vocabularySetsAtom = atom(
@@ -264,6 +266,7 @@ export const phoneticConfigAtom = atomForConfig('phoneticConfig', {
 })
 
 export const isOpenDarkModeAtom = atomWithStorage('isOpenDarkModeAtom', window.matchMedia('(prefers-color-scheme: dark)').matches)
+export const uiLocaleAtom = atomWithStorage<UiLocale>('keylinguaUiLocale', 'zh-TW')
 
 export const isShowSkipAtom = atom(false)
 

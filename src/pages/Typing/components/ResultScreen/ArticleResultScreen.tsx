@@ -1,6 +1,7 @@
 import { TypingContext, TypingStateActionType } from '../../store'
 import { calculateCPM } from '../Speed/statistics'
 import ProductIcon from '@/components/ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import { currentTypingPracticeAtom, getLibraryCompletionKey, libraryCompletionAtom } from '@/store'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { ArrowLeft, RotateCcw } from 'lucide'
@@ -13,6 +14,7 @@ const formatTime = (seconds: number) => {
 }
 
 const ArticleResultScreen = () => {
+  const { t } = useUiTranslation()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { state, dispatch } = useContext(TypingContext)!
   const currentPractice = useAtomValue(currentTypingPracticeAtom)
@@ -40,12 +42,15 @@ const ArticleResultScreen = () => {
 
   const statistics = useMemo(
     () => [
-      { label: '完成時間', value: formatTime(state.timerData.time) },
-      { label: '速度', value: `${calculateCPM(state.chapterData.correctCount, state.timerData.time)} 字/分鐘` },
-      { label: '正確率', value: `${state.timerData.accuracy}%` },
-      { label: '錯誤數', value: String(state.chapterData.wrongCount) },
+      { label: t('result.time'), value: formatTime(state.timerData.time) },
+      {
+        label: t('result.speed'),
+        value: t('result.speedValue', { value: calculateCPM(state.chapterData.correctCount, state.timerData.time) }),
+      },
+      { label: t('result.accuracy'), value: `${state.timerData.accuracy}%` },
+      { label: t('result.errors'), value: String(state.chapterData.wrongCount) },
     ],
-    [state.chapterData.correctCount, state.chapterData.wrongCount, state.timerData.accuracy, state.timerData.time],
+    [state.chapterData.correctCount, state.chapterData.wrongCount, state.timerData.accuracy, state.timerData.time, t],
   )
 
   const repeatPractice = useCallback(() => {
@@ -69,7 +74,13 @@ const ArticleResultScreen = () => {
       : currentPractice?.set.jlptLevel
   const scenario = currentPractice?.kind === 'article' ? currentPractice.document.scenario : undefined
   const returnPath = isEnglish ? (isVocabulary ? '/en/vocabulary' : '/en/dialogues') : isVocabulary ? '/ja/vocabulary' : '/ja/articles'
-  const returnLabel = isEnglish ? (isVocabulary ? '返回英文單字庫' : '返回英文對話庫') : isVocabulary ? '返回單字庫' : '返回文章庫'
+  const returnLabel = isEnglish
+    ? isVocabulary
+      ? t('library.backEnglishVocabulary')
+      : t('library.backEnglishDialogue')
+    : isVocabulary
+    ? t('library.backVocabulary')
+    : t('library.backArticle')
   const testId = isEnglish
     ? isVocabulary
       ? 'english-vocabulary-result-screen'
@@ -88,7 +99,7 @@ const ArticleResultScreen = () => {
               data-testid={!isVocabulary ? 'article-completion-status' : undefined}
               className="text-sm font-semibold tracking-wide text-green-600 dark:text-green-400"
             >
-              {isVocabulary ? '題庫完成：已完成' : isDialogue ? '對話完成：已完成' : '全文完成：已完成'}
+              {t(isVocabulary ? 'result.vocabularyCompleted' : isDialogue ? 'result.dialogueCompleted' : 'result.articleCompleted')}
             </p>
             <h1 className="mt-3 break-words text-3xl font-semibold text-gray-900 dark:text-gray-100">{title}</h1>
             <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
@@ -97,9 +108,11 @@ const ArticleResultScreen = () => {
                   {isEnglish ? 'CEFR' : 'JLPT'}：{level}
                 </span>
               )}
-              {scenario && <span>情境：{scenario}</span>}
-              {currentPractice?.kind === 'vocabulary' && <span>{currentPractice.items.length} 個單字</span>}
-              {currentPractice?.kind === 'dialogue' && <span>{currentPractice.document.sentences.length} 句</span>}
+              {scenario && <span>{t('result.scenario', { scenario })}</span>}
+              {currentPractice?.kind === 'vocabulary' && <span>{t('result.wordCount', { count: currentPractice.items.length })}</span>}
+              {currentPractice?.kind === 'dialogue' && (
+                <span>{t('result.sentenceCount', { count: currentPractice.document.sentences.length })}</span>
+              )}
             </div>
           </div>
 
@@ -115,7 +128,7 @@ const ArticleResultScreen = () => {
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <button type="button" className="app-button app-button-primary h-12 px-8 text-base" onClick={repeatPractice}>
               <ProductIcon icon={RotateCcw} size={18} />
-              再練一次
+              {t('result.repeat')}
             </button>
             <button type="button" className="app-button app-button-secondary h-12 px-8 text-base" onClick={returnToLibrary}>
               <ProductIcon icon={ArrowLeft} size={18} />

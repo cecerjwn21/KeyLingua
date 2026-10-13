@@ -1,5 +1,6 @@
-import { Dialog } from '@headlessui/react'
 import ProductIcon from '@/components/ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
+import { Dialog } from '@headlessui/react'
 import { Trash2, X } from 'lucide'
 
 export default function EnglishDeleteDialog({
@@ -15,6 +16,7 @@ export default function EnglishDeleteDialog({
   onClose: () => void
   onConfirm: () => void
 }) {
+  const { t } = useUiTranslation()
   return (
     <Dialog open={open} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
@@ -25,11 +27,11 @@ export default function EnglishDeleteDialog({
           <div className="mt-6 flex flex-wrap justify-end gap-3">
             <button type="button" className="app-button app-button-secondary" onClick={onClose}>
               <ProductIcon icon={X} size={16} />
-              取消
+              {t('common.cancel')}
             </button>
             <button type="button" className="app-button app-button-destructive" onClick={onConfirm}>
               <ProductIcon icon={Trash2} size={16} />
-              確認刪除
+              {t('common.confirmDelete')}
             </button>
           </div>
         </Dialog.Panel>

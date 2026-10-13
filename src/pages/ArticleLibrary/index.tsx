@@ -6,6 +6,7 @@ import LibraryLevelCard from '@/components/LibraryLevelCard'
 import LibraryPageHeader from '@/components/LibraryPageHeader'
 import ProductIcon from '@/components/ProductIcon'
 import useLibraryLevelRoute from '@/components/useLibraryLevelRoute'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import PracticeDocumentActions from '@/pages/Typing/components/PracticeDocumentActions'
 import { importChatGPTPracticeDocument } from '@/pages/Typing/utils/practiceImport'
 import {
@@ -41,44 +42,48 @@ const ArticleCard = ({
   onDelete?: (document: PracticeDocument) => void
   completed: boolean
   manage: boolean
-}) => (
-  <LibraryCompletionCard
-    data-testid={`article-card-${document.id}`}
-    completed={completed}
-    showCompletionStatus={!manage}
-    actions={
-      manage ? (
-        <>
-          {onDelete && (
-            <button type="button" className="app-button app-button-destructive" onClick={() => onDelete(document)}>
-              <ProductIcon icon={Trash2} size={16} />
-              刪除
-            </button>
-          )}
-          {onEdit && (
-            <button type="button" className="app-button app-button-secondary" onClick={() => onEdit(document)}>
-              <ProductIcon icon={Pencil} size={16} />
-              編輯
-            </button>
-          )}
-        </>
-      ) : (
-        <button type="button" className="app-button app-button-primary" onClick={() => onStart(document)}>
-          <ProductIcon icon={Play} size={16} />
-          開始練習
-        </button>
-      )
-    }
-  >
-    <h3 className="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{document.title}</h3>
-    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
-      {document.jlptLevel && <span>JLPT：{document.jlptLevel}</span>}
-      {document.scenario && <span>情境：{document.scenario}</span>}
-    </div>
-  </LibraryCompletionCard>
-)
+}) => {
+  const { t } = useUiTranslation()
+  return (
+    <LibraryCompletionCard
+      data-testid={`article-card-${document.id}`}
+      completed={completed}
+      showCompletionStatus={!manage}
+      actions={
+        manage ? (
+          <>
+            {onDelete && (
+              <button type="button" className="app-button app-button-destructive" onClick={() => onDelete(document)}>
+                <ProductIcon icon={Trash2} size={16} />
+                {t('library.delete')}
+              </button>
+            )}
+            {onEdit && (
+              <button type="button" className="app-button app-button-secondary" onClick={() => onEdit(document)}>
+                <ProductIcon icon={Pencil} size={16} />
+                {t('library.edit')}
+              </button>
+            )}
+          </>
+        ) : (
+          <button type="button" className="app-button app-button-primary" onClick={() => onStart(document)}>
+            <ProductIcon icon={Play} size={16} />
+            {t('library.startPractice')}
+          </button>
+        )
+      }
+    >
+      <h3 className="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{document.title}</h3>
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
+        {document.jlptLevel && <span>{t('library.level', { level: `JLPT ${document.jlptLevel}` })}</span>}
+        {document.scenario && <span>{t('library.scenario', { scenario: document.scenario })}</span>}
+      </div>
+    </LibraryCompletionCard>
+  )
+}
 
 export default function ArticleLibraryPage({ manage = false }: { manage?: boolean }) {
+  const { t } = useUiTranslation()
   const [pastedPracticeDocuments, setPastedPracticeDocuments] = useAtom(pastedPracticeDocumentsAtom)
   const libraryCompletion = useAtomValue(libraryCompletionAtom)
   const [practiceDocumentId, setPracticeDocumentId] = useAtom(practiceDocumentIdAtom)
@@ -149,8 +154,8 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
         <LibraryPageHeader
           language="japanese"
           current="article"
-          title={manage ? '管理日文文章' : '文章庫'}
-          description={manage ? '編輯或刪除已匯入的日文文章。' : '依 JLPT 等級選擇文章，使用同一套練習流程熟悉日文 IME 鍵位。'}
+          title={t(manage ? 'library.article.manageTitle' : 'library.article.title')}
+          description={t(manage ? 'library.article.manageDescription' : 'library.article.description')}
           actions={
             <>
               <PracticeDocumentActions
@@ -159,16 +164,19 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
                 onImported={(count) => setImportSuccess(count === 1 ? '文章匯入成功' : `已匯入 ${count} 篇文章`)}
               />
               {manage ? (
-                <LibraryBackButton label="返回文章庫" to={selectedLevel ? `/ja/articles?level=${selectedLevel}` : '/ja/articles'} />
+                <LibraryBackButton
+                  label={t('library.backArticle')}
+                  to={selectedLevel ? `/ja/articles?level=${selectedLevel}` : '/ja/articles'}
+                />
               ) : selectedLevel ? (
                 <Link className="app-button app-button-secondary" to={`/ja/articles/manage?level=${selectedLevel}`}>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </Link>
               ) : (
                 <button type="button" className="app-button app-button-secondary" disabled>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </button>
               )}
             </>
@@ -183,7 +191,7 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
         {manage ? (
           <section className="mt-10" aria-label="日文文章管理清單">
             {filteredDocuments.length === 0 ? (
-              <LibraryEmptyState>目前沒有日文文章。匯入 JSON 後即可集中管理。</LibraryEmptyState>
+              <LibraryEmptyState>{t('library.empty.articleManage')}</LibraryEmptyState>
             ) : (
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {filteredDocuments.map((document) => (
@@ -204,18 +212,18 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
           </section>
         ) : selectedLevel ? (
           <section className="mt-10" aria-labelledby="jlpt-articles-title">
-            <LibraryBackButton label="返回文章庫" onClick={clearSelectedLevel} />
+            <LibraryBackButton label={t('library.backArticle')} onClick={clearSelectedLevel} />
             <h2 id="jlpt-articles-title" className="mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {selectedLevel} 對話文章
+              {t('library.levelArticleTitle', { level: selectedLevel })}
             </h2>
             {filteredDocuments.length === 0 ? (
               <LibraryEmptyState className="mt-5">
-                <span>目前沒有 {selectedLevel} 文章</span>
-                <span className="mt-1 block">匯入後會自動依 JLPT 等級出現在這裡。</span>
+                <span>{t('library.empty.articleLevelTitle', { level: selectedLevel })}</span>
+                <span className="mt-1 block">{t('library.empty.articleLevelHint')}</span>
               </LibraryEmptyState>
             ) : (
               <>
-                <p className="mt-2 text-gray-600 dark:text-gray-300">共 {filteredDocuments.length} 篇</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">{t('library.articleCount', { count: filteredDocuments.length })}</p>
                 <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                   {filteredDocuments.map((document) => (
                     <ArticleCard
@@ -237,7 +245,7 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
                     ).length
                   }
                   total={filteredDocuments.length}
-                  noun="篇"
+                  noun={t('library.noun.article')}
                 />
               </>
             )}
@@ -245,7 +253,7 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
         ) : (
           <section className="mt-10" aria-labelledby="jlpt-levels-title">
             <h2 id="jlpt-levels-title" className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              選擇 JLPT 等級
+              {t('library.selectJlpt')}
             </h2>
             <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
               {JLPT_LEVELS.map((level) => {
@@ -260,25 +268,25 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
-            <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-gray-100">編輯文章</Dialog.Title>
+            <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-gray-100">{t('import.article.editTitle')}</Dialog.Title>
             {editingPreview ? (
               <div className="mt-4 space-y-4 text-gray-700 dark:text-gray-200">
-                <p className="font-medium text-green-700 dark:text-green-300">文章驗證成功</p>
+                <p className="font-medium text-green-700 dark:text-green-300">{t('import.validation.article')}</p>
                 <p>標題：{editingPreview.title}</p>
                 <p>句數：{editingPreview.sentences.length}</p>
                 <div className="flex justify-end gap-3">
                   <button type="button" className="my-btn-primary bg-gray-400" onClick={() => setEditingPreview(null)}>
-                    返回編輯
+                    {t('common.backEdit')}
                   </button>
                   <button type="button" className="my-btn-primary" onClick={saveEdit}>
-                    儲存變更
+                    {t('common.saveChanges')}
                   </button>
                 </div>
               </div>
             ) : (
               <div className="mt-4 flex flex-col gap-4">
                 <label className="flex flex-col gap-1 text-sm text-gray-700 dark:text-gray-200" htmlFor="edit-practice-json">
-                  文章 JSON
+                  {t('import.article.jsonLabel')}
                   <textarea
                     id="edit-practice-json"
                     value={editingText}
@@ -293,10 +301,10 @@ export default function ArticleLibraryPage({ manage = false }: { manage?: boolea
                 )}
                 <div className="flex justify-end gap-3">
                   <button type="button" className="my-btn-primary bg-gray-400" onClick={closeEditor}>
-                    取消
+                    {t('common.cancel')}
                   </button>
                   <button type="button" className="my-btn-primary" onClick={validateEdit}>
-                    驗證文章
+                    {t('import.article.validate')}
                   </button>
                 </div>
               </div>

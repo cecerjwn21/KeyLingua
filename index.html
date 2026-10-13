@@ -182,19 +182,27 @@
     </script>
 
     <script>
-      // Dark mode init
-      if (
-        ('state' in localStorage && JSON.parse(localStorage.state).darkMode) ||
-        (!('state' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
+      // 在 React 掛載前沿用正式 theme 與 UI locale storage，避免首屏閃動。
+      const storedTheme = localStorage.getItem('isOpenDarkModeAtom')
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      let darkMode = prefersDark
+      try {
+        if (storedTheme !== null) darkMode = JSON.parse(storedTheme) === true
+      } catch {}
+      if (darkMode) {
         document.documentElement.classList.add('dark')
       }
+      const storedLocale = localStorage.getItem('keylinguaUiLocale')
+      try {
+        const locale = storedLocale === null ? 'zh-TW' : JSON.parse(storedLocale)
+        if (['zh-TW', 'en', 'ja'].includes(locale)) document.documentElement.lang = locale
+      } catch {}
     </script>
   </head>
   <body>
     <noscript>
       <div>You need to enable JavaScript to run QWERTY Learner.</div>
-      <div>你需要启用 JavaScript 来运行 QWERTY Learner。</div>
+      <div>你需要啟用 JavaScript 才能執行 QWERTY Learner。</div>
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>

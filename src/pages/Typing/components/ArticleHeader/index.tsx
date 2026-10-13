@@ -4,6 +4,7 @@ import StartButton from '../StartButton'
 import LibraryBackButton from '@/components/LibraryBackButton'
 import ProductIcon from '@/components/ProductIcon'
 import Tooltip from '@/components/Tooltip'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import {
   articleSpeechConfigAtom,
   currentTypingPracticeAtom,
@@ -15,12 +16,13 @@ import {
 import { getEnglishVoices, resolveEnglishVoice } from '@/utils/englishVoices'
 import { getJapaneseVoices, resolveJapaneseVoice } from '@/utils/japaneseVoices'
 import { formatSpeechVoiceLabel } from '@/utils/speechVoiceLabel'
-import { Eye, EyeOff, Moon, Sun, Volume2, VolumeX } from 'lucide'
 import { useAtom, useAtomValue } from 'jotai'
+import { Eye, EyeOff, Moon, Sun, Volume2, VolumeX } from 'lucide'
 import { useEffect, useMemo, useState } from 'react'
 
 export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
   const currentPractice = useAtomValue(currentTypingPracticeAtom)
+  const { t } = useUiTranslation()
   const dictation = useAtomValue(wordDictationConfigAtom)
   const [phoneticConfig, setPhoneticConfig] = useAtom(phoneticConfigAtom)
   const [articleSpeechConfig, setArticleSpeechConfig] = useAtom(articleSpeechConfigAtom)
@@ -45,13 +47,9 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
   const isEnglish = currentPractice.language === 'english'
   const speechConfig = isEnglish ? englishSpeechConfig : articleSpeechConfig
   const availableVoices = isEnglish ? englishVoices : japaneseVoices
-  const selectedVoice = isEnglish
-    ? resolveEnglishVoice(voices, speechConfig.voiceURI)
-    : resolveJapaneseVoice(voices, speechConfig.voiceURI)
+  const selectedVoice = isEnglish ? resolveEnglishVoice(voices, speechConfig.voiceURI) : resolveJapaneseVoice(voices, speechConfig.voiceURI)
   const title =
-    currentPractice.kind === 'article' || currentPractice.kind === 'dialogue'
-      ? currentPractice.document.title
-      : currentPractice.set.title
+    currentPractice.kind === 'article' || currentPractice.kind === 'dialogue' ? currentPractice.document.title : currentPractice.set.title
   const level =
     currentPractice.kind === 'article'
       ? currentPractice.document.jlptLevel
@@ -62,21 +60,15 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
       : currentPractice.set.jlptLevel
   const scenario = currentPractice.kind === 'article' ? currentPractice.document.scenario : undefined
   const isVocabulary = currentPractice.kind === 'vocabulary'
-  const returnPath = isEnglish
-    ? isVocabulary
-      ? '/en/vocabulary'
-      : '/en/dialogues'
-    : isVocabulary
-    ? '/ja/vocabulary'
-    : '/ja/articles'
+  const returnPath = isEnglish ? (isVocabulary ? '/en/vocabulary' : '/en/dialogues') : isVocabulary ? '/ja/vocabulary' : '/ja/articles'
   const returnLabel = isEnglish
     ? isVocabulary
-      ? '返回英文單字庫'
-      : '返回英文對話庫'
+      ? t('library.backEnglishVocabulary')
+      : t('library.backEnglishDialogue')
     : isVocabulary
-    ? '返回單字庫'
-    : '返回文章庫'
-  const autoReadLabel = isVocabulary ? '新詞自動朗讀' : '新句自動朗讀'
+    ? t('library.backVocabulary')
+    : t('library.backArticle')
+  const autoReadLabel = t(isVocabulary ? 'typing.autoReadWord' : 'typing.autoReadSentence')
   const updateSpeechConfig = (update: (current: typeof speechConfig) => typeof speechConfig) => {
     if (isEnglish) setEnglishSpeechConfig(update)
     else setArticleSpeechConfig(update)
@@ -86,12 +78,15 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
     <header className="container z-20 mx-auto w-full px-3 py-3 sm:px-5 md:px-8 md:py-4">
       <nav
         className="my-card flex w-full min-w-0 flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 dark:border-slate-700 dark:bg-slate-800 sm:p-4 xl:flex-row xl:items-center"
-        aria-label={isVocabulary ? '單字練習控制' : isEnglish ? '對話練習控制' : '文章練習控制'}
+        aria-label={t(isVocabulary ? 'typing.vocabularyControls' : isEnglish ? 'typing.dialogueControls' : 'typing.articleControls')}
       >
         <div className="flex min-w-0 flex-wrap items-center gap-3 xl:flex-1">
           <LibraryBackButton label={returnLabel} to={returnPath} />
           <div className="min-w-0 flex-1 border-l border-slate-200 pl-3 dark:border-slate-700">
-            <p data-testid="practice-header-title" className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100 sm:text-base">
+            <p
+              data-testid="practice-header-title"
+              className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100 sm:text-base"
+            >
               <span data-testid={!isVocabulary ? 'article-header-title' : undefined}>{title}</span>
             </p>
             <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
@@ -100,11 +95,11 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
                   {isEnglish ? 'CEFR' : 'JLPT'}：{level}
                 </span>
               )}
-              {scenario && <span data-testid="article-header-scenario">情境：{scenario}</span>}
+              {scenario && <span data-testid="article-header-scenario">{t('result.scenario', { scenario })}</span>}
               {dictation.isOpen && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700 dark:bg-indigo-950 dark:text-indigo-200">
                   <ProductIcon icon={EyeOff} size={13} />
-                  默寫中
+                  {t('typing.dictationActive')}
                 </span>
               )}
             </div>
@@ -121,28 +116,24 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
               className={`app-icon-button ${speechConfig.autoReadSentence ? 'app-icon-button-active' : ''}`}
               aria-label={autoReadLabel}
               aria-pressed={speechConfig.autoReadSentence}
-              onClick={() =>
-                updateSpeechConfig((current) => ({ ...current, autoReadSentence: !current.autoReadSentence }))
-              }
+              onClick={() => updateSpeechConfig((current) => ({ ...current, autoReadSentence: !current.autoReadSentence }))}
             >
               <ProductIcon icon={speechConfig.autoReadSentence ? Volume2 : VolumeX} size={19} />
             </button>
           </Tooltip>
 
-          <label className="flex min-w-0 flex-1 basis-44 items-center gap-2 text-sm text-slate-600 dark:text-slate-300 sm:max-w-64">
-            <span className="sr-only">{isEnglish ? '英文語音' : '日文語音'}</span>
+          <label className="sm:max-w-64 flex min-w-0 flex-1 basis-44 items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <span className="sr-only">{t(isEnglish ? 'typing.englishVoice' : 'typing.japaneseVoice')}</span>
             <ProductIcon icon={Volume2} size={17} className="shrink-0 text-slate-400" />
             <select
-              aria-label={isEnglish ? '英文語音' : '日文語音'}
+              aria-label={t(isEnglish ? 'typing.englishVoice' : 'typing.japaneseVoice')}
               className="app-select min-w-0 flex-1 truncate"
               disabled={availableVoices.length === 0}
               value={selectedVoice?.voiceURI ?? ''}
-              onChange={(event) =>
-                updateSpeechConfig((current) => ({ ...current, voiceURI: event.target.value }))
-              }
+              onChange={(event) => updateSpeechConfig((current) => ({ ...current, voiceURI: event.target.value }))}
             >
               {availableVoices.length === 0 ? (
-                <option value="">瀏覽器預設</option>
+                <option value="">{t('typing.browserDefault')}</option>
               ) : (
                 availableVoices.map((voice) => (
                   <option key={voice.voiceURI} value={voice.voiceURI}>
@@ -154,14 +145,12 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
           </label>
 
           <label className="shrink-0">
-            <span className="sr-only">{isEnglish ? '英文語速' : '日文語速'}</span>
+            <span className="sr-only">{t(isEnglish ? 'typing.englishRate' : 'typing.japaneseRate')}</span>
             <select
-              aria-label={isEnglish ? '英文語速' : '日文語速'}
+              aria-label={t(isEnglish ? 'typing.englishRate' : 'typing.japaneseRate')}
               className="app-select w-[4.75rem]"
               value={String(speechConfig.rate)}
-              onChange={(event) =>
-                updateSpeechConfig((current) => ({ ...current, rate: Number(event.target.value) }))
-              }
+              onChange={(event) => updateSpeechConfig((current) => ({ ...current, rate: Number(event.target.value) }))}
             >
               <option value="0.9">0.9x</option>
               <option value="1">1.0x</option>
@@ -170,12 +159,12 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
           </label>
 
           {!isEnglish && (
-            <Tooltip content="顯示讀音" className="shrink-0">
+            <Tooltip content={t('typing.showReading')} className="shrink-0">
               <button
                 type="button"
-                title="顯示讀音"
+                title={t('typing.showReading')}
                 className={`app-icon-button ${phoneticConfig.isOpen ? 'app-icon-button-active' : ''}`}
-                aria-label="顯示讀音"
+                aria-label={t('typing.showReading')}
                 aria-pressed={phoneticConfig.isOpen}
                 onClick={() => setPhoneticConfig((current) => ({ ...current, isOpen: !current.isOpen }))}
               >
@@ -184,19 +173,20 @@ export default function ArticleHeader({ isLoading }: { isLoading: boolean }) {
             </Tooltip>
           )}
 
-          <Tooltip content="音效設定" className="shrink-0">
-            <SoundSwitcher ariaLabel="音效" />
+          <Tooltip content={t('typing.sound')} className="shrink-0">
+            <SoundSwitcher ariaLabel={t('typing.sound')} />
           </Tooltip>
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <StartButton isLoading={isLoading} articleMode />
-            <Tooltip content="切換深色模式" className="shrink-0">
+            <Tooltip content={t(isOpenDarkMode ? 'theme.toLight' : 'theme.toDark')} className="shrink-0">
               <button
                 className="app-icon-button"
                 type="button"
-                aria-label="切換深色模式"
+                title={t(isOpenDarkMode ? 'theme.toLight' : 'theme.toDark')}
+                aria-label={t(isOpenDarkMode ? 'theme.toLight' : 'theme.toDark')}
                 onClick={() => setIsOpenDarkMode((current) => !current)}
               >
-                <ProductIcon icon={isOpenDarkMode ? Moon : Sun} size={19} />
+                <ProductIcon icon={isOpenDarkMode ? Sun : Moon} size={19} />
               </button>
             </Tooltip>
             <PracticeSettings language={currentPractice.language} isVocabulary={isVocabulary} voices={voices} />

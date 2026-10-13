@@ -1,6 +1,7 @@
 import { TypingContext, TypingStateActionType } from '../../store'
 import ProductIcon from '@/components/ProductIcon'
 import Tooltip from '@/components/Tooltip'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import { randomConfigAtom } from '@/store'
 import { autoUpdate, offset, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { useAtomValue } from 'jotai'
@@ -9,6 +10,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 export default function StartButton({ isLoading, articleMode = false }: { isLoading: boolean; articleMode?: boolean }) {
+  const { t } = useUiTranslation()
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   const { state, dispatch } = useContext(TypingContext)!
   const randomConfig = useAtomValue(randomConfigAtom)
@@ -45,7 +47,8 @@ export default function StartButton({ isLoading, articleMode = false }: { isLoad
   const hoverButton = useHover(context)
   const { getReferenceProps, getFloatingProps } = useInteractions([hoverButton])
 
-  const label = state.isTyping ? '暫停' : articleMode ? '繼續' : '開始'
+  const label = t(state.isTyping ? 'typing.pause' : articleMode ? 'typing.resume' : 'typing.start')
+  const restartLabel = t('typing.restart')
   const stableButtonClass =
     'app-button h-10 w-28 min-w-28 px-3 transition-[background-color,border-color,color,box-shadow] active:transform-none'
 
@@ -83,10 +86,10 @@ export default function StartButton({ isLoading, articleMode = false }: { isLoad
                 onClickRestart()
                 event.currentTarget.blur()
               }}
-              aria-label="重新"
+              aria-label={restartLabel}
             >
               <ProductIcon icon={RotateCcw} size={16} />
-              <span>重新</span>
+              <span>{restartLabel}</span>
             </button>
           </div>
         )}
@@ -113,10 +116,10 @@ export default function StartButton({ isLoading, articleMode = false }: { isLoad
                 onClickRestart()
                 event.currentTarget.blur()
               }}
-              aria-label="重新"
+              aria-label={restartLabel}
             >
               <ProductIcon icon={RotateCcw} size={16} />
-              <span>重新</span>
+              <span>{restartLabel}</span>
             </button>
           </div>
         )}

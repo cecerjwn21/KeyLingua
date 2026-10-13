@@ -1,4 +1,5 @@
 import ProductIcon from './ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import clsx from 'clsx'
 import { CheckCircle2, Circle, Sparkles } from 'lucide'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
@@ -18,6 +19,7 @@ export default function LibraryCompletionCard({
   className,
   ...props
 }: LibraryCompletionCardProps) {
+  const { t } = useUiTranslation()
   return (
     <article
       {...props}
@@ -41,10 +43,10 @@ export default function LibraryCompletionCard({
         <div data-testid="library-card-actions" className="library-card-actions mt-auto flex flex-wrap items-center gap-2 pt-5">
           {actions}
           {showCompletionStatus && completed && (
-            <div data-testid="library-completion-status" className="library-completion-status" aria-label="已完成，完成 1/1">
+            <div data-testid="library-completion-status" className="library-completion-status" aria-label={`${t('library.completed')} 1/1`}>
               <span className="flex items-center justify-center gap-1 font-semibold">
                 <ProductIcon icon={CheckCircle2} size={13} />
-                已完成
+                {t('library.completed')}
               </span>
               <span className="text-[10px] leading-3 text-emerald-700 dark:text-emerald-300">完成 1/1</span>
             </div>
@@ -56,9 +58,10 @@ export default function LibraryCompletionCard({
 }
 
 export function LibraryCompletionProgress({ completed, total, noun }: { completed: number; total: number; noun: string }) {
+  const { t } = useUiTranslation()
   return (
     <p data-testid="library-completion-progress" className="mt-6 text-center text-sm font-medium text-slate-600 dark:text-slate-300">
-      完成進度：{completed} / {total} {noun}
+      {t('library.progress', { completed, total, noun })}
     </p>
   )
 }

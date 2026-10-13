@@ -1,4 +1,5 @@
 import ProductIcon from '@/components/ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import { ArrowLeft, Check, Upload } from 'lucide'
 import type { ReactNode } from 'react'
 
@@ -17,6 +18,7 @@ export default function ValidationResult({
   onBack: () => void
   onConfirm: () => void
 }) {
+  const { t } = useUiTranslation()
   return (
     <section className="mt-5 min-w-0" aria-live="polite">
       <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
@@ -35,7 +37,7 @@ export default function ValidationResult({
       <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button type="button" className="app-button app-button-secondary justify-center" onClick={onBack}>
           <ProductIcon icon={ArrowLeft} size={16} />
-          返回編輯
+          {t('common.backEdit')}
         </button>
         <button type="button" className="app-button app-button-primary justify-center" onClick={onConfirm}>
           <ProductIcon icon={Upload} size={16} />

@@ -10,6 +10,7 @@ import LibraryEmptyState from '@/components/LibraryEmptyState'
 import LibraryLevelCard from '@/components/LibraryLevelCard'
 import ProductIcon from '@/components/ProductIcon'
 import useLibraryLevelRoute from '@/components/useLibraryLevelRoute'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import ValidationResult from '@/pages/LibraryImport/ValidationResult'
 import {
   currentVocabularySetIdAtom,
@@ -22,7 +23,7 @@ import {
   practiceSourceAtom,
 } from '@/store'
 import { CEFR_LEVELS } from '@/typings'
-import type { CEFRLevel, EnglishPracticeDocument } from '@/typings'
+import type { EnglishPracticeDocument } from '@/typings'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Pencil, Play, Settings2, Trash2, Upload } from 'lucide'
 import { useState } from 'react'
@@ -44,39 +45,43 @@ const DialogueCard = ({
   onEdit: () => void
   onDelete: () => void
   completed: boolean
-}) => (
-  <LibraryCompletionCard
-    data-testid={`english-dialogue-card-${document.id}`}
-    completed={completed}
-    showCompletionStatus={!manage}
-    actions={
-      !manage ? (
-        <button type="button" className="app-button app-button-primary" onClick={onStart}>
-          <ProductIcon icon={Play} size={16} />
-          開始練習
-        </button>
-      ) : (
-        <>
-          <button type="button" className="app-button app-button-destructive" onClick={onDelete}>
-            <ProductIcon icon={Trash2} size={16} />
-            刪除
+}) => {
+  const { t } = useUiTranslation()
+  return (
+    <LibraryCompletionCard
+      data-testid={`english-dialogue-card-${document.id}`}
+      completed={completed}
+      showCompletionStatus={!manage}
+      actions={
+        !manage ? (
+          <button type="button" className="app-button app-button-primary" onClick={onStart}>
+            <ProductIcon icon={Play} size={16} />
+            {t('library.startPractice')}
           </button>
-          <button type="button" className="app-button app-button-secondary" onClick={onEdit}>
-            <ProductIcon icon={Pencil} size={16} />
-            編輯
-          </button>
-        </>
-      )
-    }
-  >
-    <h3 className="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{document.title}</h3>
-    <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
-      CEFR：{document.level}・{document.sentences.length} 句
-    </p>
-  </LibraryCompletionCard>
-)
+        ) : (
+          <>
+            <button type="button" className="app-button app-button-destructive" onClick={onDelete}>
+              <ProductIcon icon={Trash2} size={16} />
+              {t('library.delete')}
+            </button>
+            <button type="button" className="app-button app-button-secondary" onClick={onEdit}>
+              <ProductIcon icon={Pencil} size={16} />
+              {t('library.edit')}
+            </button>
+          </>
+        )
+      }
+    >
+      <h3 className="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{document.title}</h3>
+      <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+        CEFR：{document.level}・{t('library.sentenceCount', { count: document.sentences.length })}
+      </p>
+    </LibraryCompletionCard>
+  )
+}
 
 export default function EnglishDialogueLibraryPage({ manage = false }: { manage?: boolean }) {
+  const { t } = useUiTranslation()
   const [documents, setDocuments] = useAtom(englishPracticeDocumentsAtom)
   const libraryCompletion = useAtomValue(libraryCompletionAtom)
   const setEnglishPracticeDocumentId = useSetAtom(englishPracticeDocumentIdAtom)
@@ -171,25 +176,28 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
       <div className="mx-auto max-w-6xl">
         <EnglishLibraryHeader
           current="dialogue"
-          title={manage ? '管理英文對話' : '對話庫'}
-          description={manage ? '編輯或刪除已匯入的英文對話單元。' : '依 CEFR 等級選擇有名稱的英文對話或文章單元。'}
+          title={t(manage ? 'library.englishDialogue.manageTitle' : 'library.englishDialogue.title')}
+          description={t(manage ? 'library.englishDialogue.manageDescription' : 'library.englishDialogue.description')}
           actions={
             <>
               <button type="button" className="app-button app-button-primary" onClick={() => openEditor('import')}>
                 <ProductIcon icon={Upload} size={17} />
-                匯入
+                {t('library.import')}
               </button>
               {manage ? (
-                <LibraryBackButton label="返回對話庫" to={selectedLevel ? `/en/dialogues?level=${selectedLevel}` : '/en/dialogues'} />
+                <LibraryBackButton
+                  label={t('library.backDialogue')}
+                  to={selectedLevel ? `/en/dialogues?level=${selectedLevel}` : '/en/dialogues'}
+                />
               ) : selectedLevel ? (
                 <Link className="app-button app-button-secondary" to={`/en/dialogues/manage?level=${selectedLevel}`}>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </Link>
               ) : (
                 <button type="button" className="app-button app-button-secondary" disabled>
                   <ProductIcon icon={Settings2} size={17} />
-                  管理
+                  {t('library.manage')}
                 </button>
               )}
             </>
@@ -204,7 +212,7 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
         {manage ? (
           <section className="mt-10" aria-label="英文對話管理清單">
             {visibleDocuments.length === 0 ? (
-              <LibraryEmptyState>目前沒有英文對話。匯入 JSON 後即可集中管理。</LibraryEmptyState>
+              <LibraryEmptyState>{t('library.empty.dialogueManage')}</LibraryEmptyState>
             ) : (
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {visibleDocuments.map((document) => (
@@ -225,12 +233,12 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
           </section>
         ) : selectedLevel ? (
           <section className="mt-10" aria-labelledby="english-dialogue-list-title">
-            <LibraryBackButton label="返回 CEFR 等級" onClick={clearSelectedLevel} />
+            <LibraryBackButton label={t('library.backCefrLevels')} onClick={clearSelectedLevel} />
             <h2 id="english-dialogue-list-title" className="mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {selectedLevel} 對話單元
+              {t('library.levelDialogueTitle', { level: selectedLevel })}
             </h2>
             {visibleDocuments.length === 0 ? (
-              <LibraryEmptyState className="mt-5">目前沒有 {selectedLevel} 英文對話。匯入後會自動依 CEFR 等級歸類。</LibraryEmptyState>
+              <LibraryEmptyState className="mt-5">{t('library.empty.dialogueLevel', { level: selectedLevel })}</LibraryEmptyState>
             ) : (
               <>
                 <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -256,7 +264,7 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
                     ).length
                   }
                   total={visibleDocuments.length}
-                  noun="個單元"
+                  noun={t('library.noun.unit')}
                 />
               </>
             )}
@@ -264,7 +272,7 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
         ) : (
           <section className="mt-10" aria-labelledby="cefr-dialogue-levels-title">
             <h2 id="cefr-dialogue-levels-title" className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              選擇 CEFR 等級
+              {t('library.selectCefr')}
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {CEFR_LEVELS.map((level) => {
@@ -274,8 +282,8 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
                   <LibraryLevelCard
                     key={level}
                     level={level}
-                    summary={`${levelDocuments.length} 個單元`}
-                    detail={`${sentenceCount} 句`}
+                    summary={t('library.dialogueUnitCount', { count: levelDocuments.length })}
+                    detail={t('library.sentenceCount', { count: sentenceCount })}
                     onClick={() => setSelectedLevel(level)}
                   />
                 )
@@ -287,16 +295,18 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
 
       <EnglishJsonDialog
         open={editorMode !== null}
-        title={editorMode === 'edit' ? '編輯英文對話' : '匯入英文對話'}
-        label="對話 JSON"
+        title={t(editorMode === 'edit' ? 'import.dialogue.editTitle' : 'import.dialogue.title')}
+        label={t('import.dialogue.jsonLabel')}
         value={editorText}
         error={editorError}
-        confirmLabel={editorMode === 'edit' ? '儲存變更' : '驗證對話'}
+        confirmLabel={t(editorMode === 'edit' ? 'common.saveChanges' : 'import.dialogue.validate')}
         promptKind={editorMode === 'import' ? 'english-dialogue' : undefined}
         validation={
           editorPreview && (
             <ValidationResult
-              successMessage={editorPreview.length === 1 ? '對話驗證成功' : `已驗證 ${editorPreview.length} 個英文對話單元`}
+              successMessage={
+                editorPreview.length === 1 ? t('import.validation.dialogue') : `已驗證 ${editorPreview.length} 個英文對話單元`
+              }
               summary={
                 <>
                   <p>第一筆標題：{editorPreview[0].title}</p>
@@ -305,7 +315,7 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
                 </>
               }
               checks={['title', 'sentences', 'level', 'text 與 meaning']}
-              confirmLabel="確認匯入對話"
+              confirmLabel={t('import.dialogue.confirm')}
               onBack={() => setEditorPreview(null)}
               onConfirm={saveEditor}
             />
@@ -332,7 +342,7 @@ export default function EnglishDialogueLibraryPage({ manage = false }: { manage?
       />
       <EnglishDeleteDialog
         open={Boolean(deletingDocument)}
-        title="刪除英文對話"
+        title={t('delete.dialogue.title')}
         itemTitle={deletingDocument?.title ?? ''}
         onClose={() => setDeletingDocument(null)}
         onConfirm={deleteDocument}

@@ -1,8 +1,9 @@
-import { Dialog } from '@headlessui/react'
 import ProductIcon from '@/components/ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import JsonFilePicker from '@/pages/LibraryImport/JsonFilePicker'
 import PromptDisclosure from '@/pages/LibraryImport/PromptDisclosure'
 import type { LibraryImportKind } from '@/pages/LibraryImport/importPrompts'
+import { Dialog } from '@headlessui/react'
 import { Check, X } from 'lucide'
 import type { ReactNode } from 'react'
 
@@ -37,6 +38,7 @@ export default function EnglishJsonDialog({
   onClose: () => void
   onConfirm: () => void
 }) {
+  const { t } = useUiTranslation()
   return (
     <Dialog open={open} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
@@ -48,7 +50,7 @@ export default function EnglishJsonDialog({
               <label className="flex min-h-0 flex-1 flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                 {label}
                 <textarea
-                  className="min-h-40 w-full flex-1 resize-y rounded-xl border border-gray-300 bg-white px-3 py-3 font-mono text-base leading-6 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:focus:ring-indigo-900 sm:min-h-60"
+                  className="min-h-40 sm:min-h-60 w-full flex-1 resize-y rounded-xl border border-gray-300 bg-white px-3 py-3 font-mono text-base leading-6 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:focus:ring-indigo-900"
                   value={value}
                   onChange={(event) => onChange(event.target.value)}
                   spellCheck={false}
@@ -66,7 +68,7 @@ export default function EnglishJsonDialog({
               <div className="flex flex-wrap justify-end gap-3">
                 <button type="button" className="app-button app-button-secondary" onClick={onClose}>
                   <ProductIcon icon={X} size={16} />
-                  取消
+                  {t('common.cancel')}
                 </button>
                 <button type="button" className="app-button app-button-primary" onClick={onConfirm}>
                   <ProductIcon icon={Check} size={16} />

@@ -1,15 +1,16 @@
-import { importChatGPTPracticeDocuments } from '@/pages/Typing/utils/practiceImport'
 import ProductIcon from '@/components/ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import JsonFilePicker from '@/pages/LibraryImport/JsonFilePicker'
 import PromptDisclosure from '@/pages/LibraryImport/PromptDisclosure'
 import ValidationResult from '@/pages/LibraryImport/ValidationResult'
+import { importChatGPTPracticeDocuments } from '@/pages/Typing/utils/practiceImport'
 import { createPastedPracticeDocument } from '@/pages/Typing/utils/practiceText'
 import { chatGPTPracticeDocumentIdsAtom, pastedPracticeDocumentsAtom } from '@/store'
 import type { PracticeDocument } from '@/typings'
 import { Dialog } from '@headlessui/react'
 import { useSetAtom } from 'jotai'
-import { useState } from 'react'
 import { Check, ClipboardPaste, Upload, X } from 'lucide'
+import { useState } from 'react'
 
 type PracticeDocumentActionsProps = {
   onStartPractice: (document: PracticeDocument) => void
@@ -18,6 +19,7 @@ type PracticeDocumentActionsProps = {
 }
 
 export default function PracticeDocumentActions({ onStartPractice, showTextPaste = true, onImported }: PracticeDocumentActionsProps) {
+  const { t } = useUiTranslation()
   const setPastedPracticeDocuments = useSetAtom(pastedPracticeDocumentsAtom)
   const setChatGPTPracticeDocumentIds = useSetAtom(chatGPTPracticeDocumentIdsAtom)
   const [isPasteDialogOpen, setIsPasteDialogOpen] = useState(false)
@@ -92,14 +94,12 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
 
   return (
     <>
-      {showTextPaste && <button
-        type="button"
-        onClick={() => setIsPasteDialogOpen(true)}
-        className="app-button app-button-secondary"
-      >
-        <ProductIcon icon={ClipboardPaste} size={17} />
-        貼上自己的文章
-      </button>}
+      {showTextPaste && (
+        <button type="button" onClick={() => setIsPasteDialogOpen(true)} className="app-button app-button-secondary">
+          <ProductIcon icon={ClipboardPaste} size={17} />
+          貼上自己的文章
+        </button>
+      )}
       <button
         type="button"
         onClick={() => {
@@ -110,7 +110,7 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
         className="app-button app-button-primary"
       >
         <ProductIcon icon={Upload} size={17} />
-        匯入文章
+        {t('library.importArticle')}
       </button>
       <Dialog open={isPasteDialogOpen} onClose={setIsPasteDialogOpen} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
@@ -159,20 +159,25 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center overflow-y-auto p-4">
           <Dialog.Panel className="mx-auto flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-            <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-gray-100">匯入文章</Dialog.Title>
+            <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-gray-100">{t('import.article.title')}</Dialog.Title>
             {chatGPTImportPreview.length > 0 ? (
               <ValidationResult
-                successMessage={chatGPTImportPreview.length === 1 ? '文章驗證成功' : `已驗證 ${chatGPTImportPreview.length} 篇文章`}
-                summary={(
+                successMessage={
+                  chatGPTImportPreview.length === 1 ? t('import.validation.article') : `已驗證 ${chatGPTImportPreview.length} 篇文章`
+                }
+                summary={
                   <>
-                    <p>{chatGPTImportPreview.length === 1 ? '標題：' : '第一篇標題：'}{chatGPTImportPreview[0].title}</p>
+                    <p>
+                      {chatGPTImportPreview.length === 1 ? '標題：' : '第一篇標題：'}
+                      {chatGPTImportPreview[0].title}
+                    </p>
                     <p>程度：{chatGPTImportPreview[0].jlptLevel}</p>
                     <p>情境：{chatGPTImportPreview[0].scenario || '未提供'}</p>
                     <p>句數：{chatGPTImportPreview[0].sentences.length}</p>
                   </>
-                )}
+                }
                 checks={['日文原文', 'Furigana', '繁中翻譯', 'JLPT 與句數']}
-                confirmLabel="確認匯入文章"
+                confirmLabel={t('import.article.confirm')}
                 onBack={() => setChatGPTImportPreview([])}
                 onConfirm={saveChatGPTImport}
               />
@@ -180,7 +185,7 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
               <div className="mt-5 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto pr-1">
                 <p className="text-sm text-gray-700 dark:text-gray-200">將 ChatGPT 產生的文章資料貼到下方。</p>
                 <label className="flex flex-col gap-1 text-sm text-gray-700 dark:text-gray-200" htmlFor="chatgpt-practice-json">
-                  文章 JSON
+                  {t('import.article.jsonLabel')}
                   <textarea
                     id="chatgpt-practice-json"
                     value={chatGPTImportText}
@@ -191,7 +196,7 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
                       setChatGPTImportPreview([])
                       setChatGPTImportError('')
                     }}
-                    className="min-h-40 w-full flex-1 resize-y rounded-xl border border-gray-300 bg-white px-3 py-3 font-mono text-base leading-6 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:focus:ring-indigo-900 sm:min-h-60"
+                    className="min-h-40 sm:min-h-60 w-full flex-1 resize-y rounded-xl border border-gray-300 bg-white px-3 py-3 font-mono text-base leading-6 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:focus:ring-indigo-900"
                     placeholder={'{"title":"文章標題","jlptLevel":"N4","scenario":"izakaya","sentences":[...]}'}
                   />
                 </label>
@@ -205,7 +210,7 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
                 <div className="flex flex-wrap justify-end gap-3">
                   <button type="button" className="app-button app-button-secondary" onClick={() => setIsChatGPTImportDialogOpen(false)}>
                     <ProductIcon icon={X} size={16} />
-                    取消
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="button"
@@ -213,7 +218,7 @@ export default function PracticeDocumentActions({ onStartPractice, showTextPaste
                     onClick={() => validateChatGPTImport(chatGPTImportFileTexts.length > 0 ? chatGPTImportFileTexts : [chatGPTImportText])}
                   >
                     <ProductIcon icon={Check} size={16} />
-                    驗證文章
+                    {t('import.article.validate')}
                   </button>
                 </div>
               </div>

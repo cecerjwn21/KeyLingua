@@ -33,7 +33,17 @@ test('Japanese 逐頁 visual QA：Library、列表、匯入、Typing、ResultScr
       JSON.stringify({
         version: 1,
         sets: [{ id: 'product-visual-vocabulary', title: 'N5｜日常生活單字', jlptLevel: 'N5', createdAt: '2026-08-27T00:00:00.000Z' }],
-        items: [{ id: 'product-visual-word', setId: 'product-visual-vocabulary', jlptLevel: 'N5', word: '猫', reading: 'ねこ', meaning: '貓', source: 'manual' }],
+        items: [
+          {
+            id: 'product-visual-word',
+            setId: 'product-visual-vocabulary',
+            jlptLevel: 'N5',
+            word: '猫',
+            reading: 'ねこ',
+            meaning: '貓',
+            source: 'manual',
+          },
+        ],
       }),
     )
     localStorage.removeItem('practiceDocumentId')
@@ -74,7 +84,7 @@ test('Japanese 逐頁 visual QA：Library、列表、匯入、Typing、ResultScr
   await expectNoHorizontalOverflow(page)
   await page.screenshot({ path: testInfo.outputPath('japanese-vocabulary-set-light.png'), fullPage: true })
 
-  await page.getByTestId('vocabulary-set-card').getByRole('button', { name: '開始練習' }).click()
+  await page.getByTestId('vocabulary-set-card').filter({ hasText: 'N5｜日常生活單字' }).getByRole('button', { name: '開始練習' }).click()
   await expect(page.getByRole('heading', { name: '猫', exact: true })).toBeVisible()
   await page.evaluate(() => localStorage.setItem('isOpenDarkModeAtom', JSON.stringify(true)))
   await page.reload()

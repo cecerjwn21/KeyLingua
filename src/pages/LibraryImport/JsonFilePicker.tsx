@@ -1,4 +1,5 @@
 import ProductIcon from '@/components/ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import { FilePlus } from 'lucide'
 import { useRef } from 'react'
 
@@ -9,6 +10,7 @@ type JsonFilePickerProps = {
 }
 
 export default function JsonFilePicker({ selectedFileNames = [], onFilesSelected, multiple = true }: JsonFilePickerProps) {
+  const { t } = useUiTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const selectedNames = selectedFileNames.filter(Boolean)
   const selectedFileLabel = selectedNames.join('、')
@@ -16,10 +18,10 @@ export default function JsonFilePicker({ selectedFileNames = [], onFilesSelected
   return (
     <div data-testid="json-file-picker" className="min-w-0">
       <div className="flex min-w-0 items-center justify-between gap-3">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">選擇 JSON 檔案</span>
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{t('import.file.select')}</span>
         <input
           ref={inputRef}
-          aria-label="選擇 JSON 檔案"
+          aria-label={t('import.file.select')}
           type="file"
           accept=".json,application/json"
           multiple={multiple}
@@ -32,8 +34,8 @@ export default function JsonFilePicker({ selectedFileNames = [], onFilesSelected
         />
         <button
           type="button"
-          aria-label="開啟 JSON 檔案選擇器"
-          title="選擇 JSON 檔案"
+          aria-label={t('import.file.openPicker')}
+          title={t('import.file.select')}
           className="app-button app-button-secondary h-9 w-9 shrink-0 justify-center rounded-lg px-0"
           onClick={() => inputRef.current?.click()}
         >

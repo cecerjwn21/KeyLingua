@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom'
 import ProductIcon from './ProductIcon'
+import { useUiTranslation } from '@/i18n/useUiTranslation'
 import { BookOpenText, LibraryBig } from 'lucide'
+import { Link } from 'react-router-dom'
 
 export default function LibraryTabs({
   current,
@@ -9,6 +10,7 @@ export default function LibraryTabs({
   current: 'article' | 'dialogue' | 'vocabulary'
   language?: 'japanese' | 'english'
 }) {
+  const { t } = useUiTranslation()
   const itemClass = (active: boolean) =>
     `inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 active:scale-[0.97] ${
       active
@@ -17,14 +19,14 @@ export default function LibraryTabs({
     }`
 
   return (
-    <nav aria-label="資料庫入口" className="grid w-full grid-cols-2 rounded-xl bg-slate-200/70 p-1 dark:bg-slate-800">
+    <nav aria-label={t('library.navigation')} className="grid w-full grid-cols-2 rounded-xl bg-slate-200/70 p-1 dark:bg-slate-800">
       <Link
         to={language === 'english' ? '/en/dialogues' : '/ja/articles'}
         className={itemClass(current === 'article' || current === 'dialogue')}
         aria-current={current === 'article' || current === 'dialogue' ? 'page' : undefined}
       >
         <ProductIcon icon={BookOpenText} size={16} />
-        {language === 'english' ? '對話庫' : '文章庫'}
+        {t(language === 'english' ? 'library.dialogue.tab' : 'library.article.tab')}
       </Link>
       <Link
         to={language === 'english' ? '/en/vocabulary' : '/ja/vocabulary'}
@@ -32,7 +34,7 @@ export default function LibraryTabs({
         aria-current={current === 'vocabulary' ? 'page' : undefined}
       >
         <ProductIcon icon={LibraryBig} size={16} />
-        單字庫
+        {t('library.vocabulary.tab')}
       </Link>
     </nav>
   )

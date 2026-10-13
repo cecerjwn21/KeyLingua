@@ -8,7 +8,7 @@ import { FriendLinks } from './pages/FriendLinks'
 import MobilePage from './pages/Mobile'
 import TypingRoute from './pages/Typing/TypingRoute'
 import VocabularyPage from './pages/Vocabulary'
-import { isOpenDarkModeAtom } from '@/store'
+import { isOpenDarkModeAtom, uiLocaleAtom } from '@/store'
 import { Analytics } from '@vercel/analytics/react'
 import 'animate.css'
 import { useAtomValue } from 'jotai'
@@ -32,9 +32,13 @@ if (process.env.NODE_ENV === 'production') {
 
 function Root() {
   const darkMode = useAtomValue(isOpenDarkModeAtom)
+  const uiLocale = useAtomValue(uiLocaleAtom)
   useEffect(() => {
     darkMode ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')
   }, [darkMode])
+  useEffect(() => {
+    document.documentElement.lang = uiLocale
+  }, [uiLocale])
 
   return (
     <React.StrictMode>
